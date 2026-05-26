@@ -126,7 +126,7 @@ export default function AITaskSuggestions({ onApply }) {
       {!loading && suggestions.length > 0 && (
         <div>
           <p style={{ color: colors.textMuted, fontSize: '12px', fontWeight: '600', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-            ✨ AI suggests:
+            ✨ AI suggests :
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {suggestions.map((s, i) => (
