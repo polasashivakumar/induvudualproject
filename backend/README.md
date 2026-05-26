@@ -4,7 +4,7 @@ This folder contains the Express, MongoDB, and worker logic for the distributed 
 
 ## Features
 
-- JWT authentication with student and admin roles
+-  JWT authentication with student and admin roles
 - task/job creation and lifecycle management
 - file upload and download support
 - AI task suggestion endpoint
