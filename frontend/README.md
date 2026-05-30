@@ -40,8 +40,9 @@ frontend/
 ## Setup
 
 1. Install dependencies.
-2. Make sure the backend is running on `http://localhost:5000`.
-3. Start the frontend development server.
+2. For local development, make sure the backend is running on `http://localhost:5000`.
+3. For production, set `VITE_API_URL` to your deployed backend URL, for example `https://induvudualproject.onrender.com`.
+4. Start the frontend development server.
 
 ## Available Scripts
 
@@ -52,4 +53,12 @@ frontend/
 
 ## API Connection
 
-The frontend uses a shared Axios client in [src/api/axios.js](src/api/axios.js) with the API base URL set to `http://localhost:5000/api`.
+The frontend uses a shared Axios client in [src/api/axios.js](src/api/axios.js) with its base URL controlled by `VITE_API_URL`.
+
+## Render Deployment
+
+If you deploy this app to Render as a Static Site, use these settings:
+
+- Build command: `npm run build`
+- Publish directory: `dist`
+- Environment variable: `VITE_API_URL=https://induvudualproject.onrender.com`
