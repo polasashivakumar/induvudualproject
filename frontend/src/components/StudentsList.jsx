@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import API from '../api/axios'
+import { FILE_BASE_URL } from '../api/config'
 import toast from 'react-hot-toast'
 
 const DEPARTMENTS = ['ALL', 'IT', 'CSE', 'ECE', 'EEE', 'AIML', 'DS']
@@ -311,7 +312,7 @@ export default function StudentsList() {
                 /\.(jpg|jpeg|png|gif)$/i
               ) ? (
                 <img
-                  src={`http://localhost:5000${viewFile.url}`}
+                  src={`${FILE_BASE_URL}${viewFile.url}`}
                   alt={viewFile.name}
                   style={{
                     width: '100%',
@@ -320,7 +321,7 @@ export default function StudentsList() {
                 />
               ) : viewFile.name?.match(/\.pdf$/i) ? (
                 <iframe
-                  src={`http://localhost:5000${viewFile.url}`}
+                  src={`${FILE_BASE_URL}${viewFile.url}`}
                   title={viewFile.name}
                   style={{
                     width: '100%',
@@ -338,7 +339,7 @@ export default function StudentsList() {
                   <p>Preview not available</p>
 
                   <a
-                    href={`http://localhost:5000${viewFile.url}`}
+                    href={`${FILE_BASE_URL}${viewFile.url}`}
                     download={viewFile.name}
                     className="download-btn"
                   >
