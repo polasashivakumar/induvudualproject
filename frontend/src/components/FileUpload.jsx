@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react'
 import toast from 'react-hot-toast'
+import { API_ORIGIN } from '../config'
 
 export default function FileUpload({ onUploaded, existingFiles = [] }) {
   const [files, setFiles] = useState(existingFiles)
@@ -14,7 +15,8 @@ export default function FileUpload({ onUploaded, existingFiles = [] }) {
     const token = localStorage.getItem('token')
     setUploading(true)
     try {
-      const res = await fetch('http://localhost:5000/api/upload', {
+      // ✅ FIX: use API_ORIGIN instead of localhost:5000
+      const res = await fetch(`${API_ORIGIN}/api/upload`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData
@@ -116,7 +118,8 @@ export default function FileUpload({ onUploaded, existingFiles = [] }) {
               </div>
               <div style={{ display: 'flex', gap: '8px' }}>
                 {f.url && (
-                  <a href={`http://localhost:5000${f.url}`} target="_blank" rel="noreferrer" style={{
+                  // ✅ FIX: use API_ORIGIN instead of localhost:5000
+                  <a href={`${API_ORIGIN}${f.url}`} target="_blank" rel="noreferrer" style={{
                     padding: '4px 10px', background: 'rgba(124,58,237,0.2)',
                     border: '1px solid rgba(124,58,237,0.3)', borderRadius: '6px',
                     color: '#a78bfa', fontSize: '11px', fontWeight: '600',
