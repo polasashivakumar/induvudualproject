@@ -7,7 +7,30 @@ require('dotenv').config();
 
 const app = express();
 
-app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+const allowedOrigins = new Set(
+  [
+    'http://localhost:5173',
+    'https://induvudualproject.vercel.app',
+    process.env.FRONTEND_URL,
+    process.env.CORS_ORIGIN,
+  ]
+    .filter(Boolean)
+    .flatMap((value) => value.split(',').map((origin) => origin.trim()))
+    .filter(Boolean)
+)
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.has(origin)) {
+        return callback(null, true)
+      }
+
+      return callback(new Error(`CORS blocked for origin: ${origin}`))
+    },
+    credentials: true,
+  })
+)
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
