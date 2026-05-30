@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
 import toast from 'react-hot-toast'
+import API from '../api/axios'
 
 const stateColors = {
   waiting: 'bg-yellow-500',
@@ -17,8 +17,8 @@ export default function Dashboard() {
   const fetchData = async () => {
     try {
       const [jobsRes, statsRes] = await Promise.all([
-        axios.get('http://localhost:5000/api/jobs/all'),
-        axios.get('http://localhost:5000/api/jobs/stats')
+        API.get('/jobs/all'),
+        API.get('/jobs/stats')
       ])
       setJobs(jobsRes.data)
       setStats(statsRes.data)
@@ -30,7 +30,7 @@ export default function Dashboard() {
 
   const clearCompleted = async () => {
     try {
-      await axios.delete('http://localhost:5000/api/jobs/completed')
+      await API.delete('/jobs/completed')
       toast.success('Completed jobs cleared!')
       fetchData()
     } catch {
