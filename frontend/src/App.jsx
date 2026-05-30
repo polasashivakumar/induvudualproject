@@ -23,15 +23,17 @@ export default function App() {
               borderRadius: '12px', fontSize: '13px'
             }
           }} />
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/" element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } />
-          </Routes>
+          <div style={{ overflowX: 'hidden', maxWidth: '100vw' }}>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/" element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              } />
+            </Routes>
+          </div>
         </BrowserRouter>
       </AuthProvider>
     </ThemeProvider>
