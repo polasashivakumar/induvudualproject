@@ -647,11 +647,14 @@ export default function JobTable({ onJobsUpdate }) {
             No tasks found
           </div>
         ) : (
-          <div style={{ overflowX: 'auto' }}>
+          // ✅ MOBILE SCROLL FIX
+          <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
             <table
               style={{
                 width: '100%',
-                borderCollapse: 'collapse'
+                borderCollapse: 'collapse',
+                fontSize: '13px',
+                minWidth: '600px'
               }}
             >
               <thead>
@@ -877,7 +880,7 @@ export default function JobTable({ onJobsUpdate }) {
                           </button>
                         )}
 
-                        {/* STUDENT actions — NO rating button */}
+                        {/* STUDENT actions */}
                         {user?.role !== 'admin' && (
                           <>
                             {/* Mark complete */}

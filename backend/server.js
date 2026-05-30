@@ -42,6 +42,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/jobs', require('./routes/jobs'));
 app.use('/api/upload', require('./routes/upload'));
 app.use('/api/ai', require('./routes/ai'));
+app.use('/api/announcements', require('./routes/announcements'));
 const PORT = process.env.PORT || 5000;
 
 const start = async () => {

@@ -46,6 +46,14 @@ export default function SubmitJob({ onSubmitted, prefill }) {
   const [usedTemplate, setUsedTemplate] = useState('')
   const [templateSearch, setTemplateSearch] = useState('')
 
+  // ✅ MOBILE FIX
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   useEffect(() => {
     if (prefill) {
       setForm(f => ({
@@ -110,7 +118,7 @@ export default function SubmitJob({ onSubmitted, prefill }) {
       <div style={{
         background: 'rgba(17,24,39,0.8)',
         border: '1px solid rgba(255,255,255,0.08)',
-        borderRadius: '20px', padding: '32px',
+        borderRadius: '20px', padding: isMobile ? '20px 16px' : '32px',
         backdropFilter: 'blur(20px)'
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
@@ -209,7 +217,8 @@ export default function SubmitJob({ onSubmitted, prefill }) {
           <label style={{ display: 'block', fontSize: '12px', color: '#9ca3af', marginBottom: '10px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
             Task Type
           </label>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: '8px' }}>
+          {/* ✅ MOBILE FIX: 3 cols on mobile, 5 on desktop */}
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(3,1fr)' : 'repeat(5,1fr)', gap: '8px' }}>
             {taskTypes.map(t => (
               <button key={t.value} onClick={() => setForm({ ...form, type: t.value })} style={{
                 padding: '12px 6px', borderRadius: '12px', border: 'none',
@@ -264,7 +273,8 @@ export default function SubmitJob({ onSubmitted, prefill }) {
           <FileUpload onUploaded={setAttachments} existingFiles={attachments} />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
+        {/* ✅ MOBILE FIX: stack priority + due date on mobile */}
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
           <div>
             <label style={{ display: 'block', fontSize: '12px', color: '#9ca3af', marginBottom: '8px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
               Priority

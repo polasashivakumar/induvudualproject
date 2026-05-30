@@ -520,4 +520,36 @@ router.put('/:id/start-timer', protect, async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+// Leaderboard
+router.get('/leaderboard', protect, async (req, res) => {
+  try {
+    const students = await User.find({ role: 'student' }).select('-password');
+    const leaderboard = await Promise.all(students.map(async (s) => {
+      const jobs = await Job.find({ userId: s._id });
+      const completed = jobs.filter(j => j.state === 'completed').length;
+      const total = jobs.length;
+      return {
+        userId: s._id,
+        name: s.name,
+        department: s.department,
+        rollNumber: s.rollNumber,
+        completed,
+        total,
+        completionRate: total ? Math.round((completed / total) * 100) : 0,
+        badges: s.badges?.length || 0
+      };
+    }));
+
+    // Sort by completed tasks then completion rate
+    leaderboard.sort((a, b) =>
+      b.completed !== a.completed
+        ? b.completed - a.completed
+        : b.completionRate - a.completionRate
+    );
+
+    res.json(leaderboard.slice(0, 20));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 module.exports = router;
