@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import toast from 'react-hot-toast'
-import { API_ORIGIN } from '../config'
+import { API_ORIGIN } from '../api/config'
 
 export default function FileUpload({ onUploaded, existingFiles = [] }) {
   const [files, setFiles] = useState(existingFiles)
