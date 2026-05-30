@@ -4,7 +4,7 @@ This folder contains the Express, MongoDB, and worker logic for the distributed 
 
 ## Features
 
--  JWT authentication with student and admin roles
+- JWT authentication with student and admin roles
 - task/job creation and lifecycle management
 - file upload and download support
 - AI task suggestion endpoint
@@ -56,6 +56,8 @@ Required variables are:
 - `EMAIL_USER`
 - `EMAIL_PASS`
 - `GROQ_API_KEY`
+- `FRONTEND_URL` or `CORS_ORIGIN` for deployed frontend access
+- Example frontend origin: `https://induvudualproject.vercel.app`
 
 ## Available Scripts
 
@@ -76,3 +78,7 @@ The current `package.json` only includes the default test placeholder. Typical l
 - `POST /api/ai/suggest`
 
 The backend also serves uploaded files from `/uploads`.
+
+## Render Deployment
+
+If you deploy this backend to Render as a Web Service, make sure the start command is `node server.js` and set `FRONTEND_URL` or `CORS_ORIGIN` to your deployed frontend origin, for example `https://induvudualproject.vercel.app`.
