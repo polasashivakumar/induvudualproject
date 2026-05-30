@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import API from '../api/axios'
+import { FILE_BASE_URL } from '../api/config'
 import toast from 'react-hot-toast'
 
 const stateConfig = {
@@ -142,17 +143,17 @@ export default function AdminDashboardHome() {
               display: 'flex', alignItems: 'center', justifyContent: 'center'
             }}>
               {viewFile.name?.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
-                <img src={`http://localhost:5000${viewFile.url}`} alt={viewFile.name}
+                <img src={`${FILE_BASE_URL}${viewFile.url}`} alt={viewFile.name}
                   style={{ maxWidth: '100%', maxHeight: '500px', borderRadius: '8px', objectFit: 'contain' }} />
               ) : viewFile.name?.match(/\.pdf$/i) ? (
-                <iframe src={`http://localhost:5000${viewFile.url}`}
+                <iframe src={`${FILE_BASE_URL}${viewFile.url}`}
                   style={{ width: '100%', height: '500px', border: 'none', borderRadius: '8px' }}
                   title={viewFile.name} />
               ) : (
                 <div style={{ textAlign: 'center', padding: '40px' }}>
                   <div style={{ fontSize: '56px', marginBottom: '16px' }}>📎</div>
                   <p style={{ color: '#9ca3af', marginBottom: '20px' }}>Preview not available</p>
-                  <a href={`http://localhost:5000${viewFile.url}`} download={viewFile.name} style={{
+                  <a href={`${FILE_BASE_URL}${viewFile.url}`} download={viewFile.name} style={{
                     padding: '12px 24px', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)',
                     borderRadius: '10px', color: '#fff', textDecoration: 'none',
                     fontWeight: '600', fontSize: '14px', display: 'inline-block'
@@ -161,7 +162,7 @@ export default function AdminDashboardHome() {
               )}
             </div>
             <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
-              <a href={`http://localhost:5000${viewFile.url}`} download={viewFile.name} style={{
+              <a href={`${FILE_BASE_URL}${viewFile.url}`} download={viewFile.name} style={{
                 flex: 1, padding: '11px', textAlign: 'center',
                 background: 'linear-gradient(135deg, #7c3aed, #4f46e5)',
                 borderRadius: '10px', color: '#fff',
