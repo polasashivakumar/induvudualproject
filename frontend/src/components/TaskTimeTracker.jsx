@@ -6,7 +6,14 @@ import { useTheme } from '../context/ThemeContext'
 export default function TaskTimeTracker({ jobs, onUpdate }) {
   const [activeTimer, setActiveTimer] = useState(null)
   const [elapsed, setElapsed] = useState(0)
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const { colors } = useTheme()
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   useEffect(() => {
     let interval
@@ -48,9 +55,9 @@ export default function TaskTimeTracker({ jobs, onUpdate }) {
   return (
     <div style={{
       background: colors.card, border: `1px solid ${colors.cardBorder}`,
-      borderRadius: '20px', padding: '24px'
+      borderRadius: '20px', padding: isMobile ? '18px' : '24px'
     }}>
-      <h3 style={{ color: colors.text, fontWeight: '700', fontSize: '16px', marginBottom: '16px' }}>
+      <h3 style={{ color: colors.text, fontWeight: '700', fontSize: isMobile ? '15px' : '16px', marginBottom: '16px' }}>
         ⏱️ Task Time Tracker
       </h3>
 
@@ -59,17 +66,17 @@ export default function TaskTimeTracker({ jobs, onUpdate }) {
         <div style={{
           background: 'linear-gradient(135deg, rgba(124,58,237,0.2), rgba(79,70,229,0.1))',
           border: '1px solid rgba(124,58,237,0.3)',
-          borderRadius: '14px', padding: '20px', marginBottom: '16px',
+          borderRadius: '14px', padding: isMobile ? '16px' : '20px', marginBottom: '16px',
           textAlign: 'center'
         }}>
           <p style={{ color: '#a78bfa', fontSize: '12px', fontWeight: '600', marginBottom: '8px' }}>
             ⏱️ TRACKING
           </p>
-          <p style={{ color: colors.text, fontWeight: '600', fontSize: '14px', marginBottom: '12px' }}>
+          <p style={{ color: colors.text, fontWeight: '600', fontSize: isMobile ? '13px' : '14px', marginBottom: '12px' }}>
             {activeTimer.title}
           </p>
           <div style={{
-            fontSize: '42px', fontWeight: '800', color: '#fff',
+            fontSize: isMobile ? '34px' : '42px', fontWeight: '800', color: '#fff',
             fontFamily: 'monospace', letterSpacing: '2px', marginBottom: '16px'
           }}>
             {formatTime(elapsed)}
@@ -94,8 +101,8 @@ export default function TaskTimeTracker({ jobs, onUpdate }) {
         ) : (
           activeTasks.map(job => (
             <div key={job._id} style={{
-              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-              padding: '12px 14px', background: colors.inputBg,
+              display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'stretch' : 'center',
+              gap: isMobile ? '10px' : '0', padding: '12px 14px', background: colors.inputBg,
               border: `1px solid ${colors.inputBorder}`, borderRadius: '10px'
             }}>
               <div>
@@ -111,7 +118,7 @@ export default function TaskTimeTracker({ jobs, onUpdate }) {
               <button
                 onClick={() => activeTimer?.jobId === job._id ? stopTimer() : startTimer(job)}
                 style={{
-                  padding: '6px 14px',
+                  padding: isMobile ? '8px 14px' : '6px 14px',
                   background: activeTimer?.jobId === job._id
                     ? 'rgba(239,68,68,0.15)' : 'rgba(124,58,237,0.15)',
                   border: `1px solid ${activeTimer?.jobId === job._id

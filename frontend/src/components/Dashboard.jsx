@@ -76,8 +76,8 @@ export default function Dashboard() {
   // ✅ CSS-only responsive grid — no JS breakpoint needed
   const twoColGrid = {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-    gap: '16px',
+    gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, minmax(0, 1fr))',
+    gap: isMobile ? '14px' : '18px',
     width: '100%'
   }
 
@@ -156,11 +156,12 @@ export default function Dashboard() {
       {!isMobile && (
         <div style={{
           background: colors.navBg, borderBottom: `1px solid ${colors.navBorder}`,
-          padding: '0 32px', display: 'flex', gap: '4px', alignItems: 'center'
+          padding: '0 24px', display: 'flex', gap: '4px', alignItems: 'center',
+          overflowX: 'auto', whiteSpace: 'nowrap', scrollbarWidth: 'none'
         }}>
           {tabs.map(tab => (
             <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
-              padding: '14px 20px', border: 'none',
+              padding: '14px 18px', border: 'none', flexShrink: 0,
               background: 'transparent', cursor: 'pointer',
               color: activeTab === tab.id ? '#a78bfa' : colors.textMuted,
               fontSize: '13px', fontWeight: '600',
@@ -176,7 +177,7 @@ export default function Dashboard() {
 
       {/* Content */}
       <div style={{
-        padding: isMobile ? '16px' : '24px 32px',
+        padding: isMobile ? '16px' : '24px 28px',
         maxWidth: '1400px',
         margin: '0 auto',
         width: '100%',
@@ -188,7 +189,12 @@ export default function Dashboard() {
           border: '1px solid rgba(124,58,237,0.2)',
           borderRadius: '14px',
           padding: isMobile ? '14px 16px' : '18px 24px',
-          marginBottom: '20px'
+          marginBottom: '20px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: isMobile ? 'flex-start' : 'center',
+          gap: '14px',
+          flexWrap: 'wrap'
         }}>
           <h2 style={{
             fontSize: isMobile ? '18px' : '22px',
@@ -202,6 +208,12 @@ export default function Dashboard() {
               : `🎓 ${user?.department || 'Student'} ${user?.rollNumber ? `• ${user.rollNumber}` : ''}`}
           </p>
         </div>
+
+        {!isMobile && (
+          <div style={{ color: colors.textMuted, fontSize: '12px', fontWeight: '600', textAlign: 'right' }}>
+            Best viewed on desktop and mobile
+          </div>
+        )}
 
         {renderContent()}
       </div>

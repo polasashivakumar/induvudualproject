@@ -2,10 +2,16 @@ import { useEffect, useState } from 'react'
 
 export default function CountdownTimer({ jobs }) {
   const [now, setNow] = useState(new Date())
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
 
   useEffect(() => {
     const interval = setInterval(() => setNow(new Date()), 1000)
-    return () => clearInterval(interval)
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handleResize)
+    return () => {
+      clearInterval(interval)
+      window.removeEventListener('resize', handleResize)
+    }
   }, [])
 
   const upcoming = jobs
@@ -31,15 +37,15 @@ export default function CountdownTimer({ jobs }) {
   return (
     <div style={{
       background: 'rgba(17,24,39,0.6)', border: '1px solid rgba(255,255,255,0.08)',
-      borderRadius: '20px', padding: '24px', backdropFilter: 'blur(10px)',
+      borderRadius: '20px', padding: isMobile ? '18px' : '24px', backdropFilter: 'blur(10px)',
       minWidth: 0,        // ✅ FIX
       overflow: 'hidden'  // ✅ FIX
     }}>
       <div style={{ marginBottom: '16px' }}>
-        <h3 style={{ color: '#fff', fontWeight: '700', fontSize: '16px' }}>
+        <h3 style={{ color: '#fff', fontWeight: '700', fontSize: isMobile ? '15px' : '16px' }}>
           ⏰ Deadline Countdown
         </h3>
-        <p style={{ color: '#4b5563', fontSize: '12px', marginTop: '2px' }}>
+        <p style={{ color: '#4b5563', fontSize: isMobile ? '11px' : '12px', marginTop: '2px' }}>
           Live countdown for upcoming tasks
         </p>
       </div>
@@ -48,13 +54,13 @@ export default function CountdownTimer({ jobs }) {
       {overdue.length > 0 && (
         <div style={{
           background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)',
-          borderRadius: '10px', padding: '12px 14px', marginBottom: '12px'
+          borderRadius: '10px', padding: isMobile ? '10px 12px' : '12px 14px', marginBottom: '12px'
         }}>
-          <p style={{ color: '#ef4444', fontWeight: '700', fontSize: '13px' }}>
+          <p style={{ color: '#ef4444', fontWeight: '700', fontSize: isMobile ? '12px' : '13px' }}>
             ⚠️ {overdue.length} Overdue Task{overdue.length > 1 ? 's' : ''}!
           </p>
           {overdue.map(j => (
-            <p key={j._id} style={{ color: '#fca5a5', fontSize: '12px', marginTop: '4px' }}>
+            <p key={j._id} style={{ color: '#fca5a5', fontSize: isMobile ? '11px' : '12px', marginTop: '4px' }}>
               • {j.title}
             </p>
           ))}
@@ -63,9 +69,9 @@ export default function CountdownTimer({ jobs }) {
 
       {/* Upcoming */}
       {upcoming.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '30px', color: '#4b5563' }}>
-          <div style={{ fontSize: '32px', marginBottom: '8px' }}>🎉</div>
-          <p style={{ fontSize: '13px' }}>No upcoming deadlines!</p>
+        <div style={{ textAlign: 'center', padding: isMobile ? '22px 12px' : '30px', color: '#4b5563' }}>
+          <div style={{ fontSize: isMobile ? '28px' : '32px', marginBottom: '8px' }}>🎉</div>
+          <p style={{ fontSize: isMobile ? '12px' : '13px' }}>No upcoming deadlines!</p>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -75,14 +81,14 @@ export default function CountdownTimer({ jobs }) {
               <div key={job._id} style={{
                 background: time.urgent ? 'rgba(239,68,68,0.1)' : 'rgba(255,255,255,0.04)',
                 border: `1px solid ${time.urgent ? 'rgba(239,68,68,0.3)' : 'rgba(255,255,255,0.08)'}`,
-                borderRadius: '12px', padding: '12px 14px',
-                display: 'flex', justifyContent: 'space-between',
-                alignItems: 'center', gap: '8px'  // ✅ FIX: gap instead of relying on width
+                borderRadius: '12px', padding: isMobile ? '12px' : '12px 14px',
+                display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between',
+                alignItems: isMobile ? 'stretch' : 'center', gap: '8px'
               }}>
                 <div style={{ minWidth: 0, flex: 1 }}>  {/* ✅ FIX */}
                   <div style={{
-                    color: '#e5e7eb', fontWeight: '600', fontSize: '13px',
-                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'
+                    color: '#e5e7eb', fontWeight: '600', fontSize: isMobile ? '12px' : '13px',
+                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: isMobile ? 'normal' : 'nowrap'
                   }}>
                     {job.title}
                   </div>
@@ -92,12 +98,13 @@ export default function CountdownTimer({ jobs }) {
                 </div>
                 <div style={{
                   color: time.urgent ? '#ef4444' : '#10b981',
-                  fontWeight: '700', fontSize: '12px',
+                  fontWeight: '700', fontSize: isMobile ? '11px' : '12px',
                   background: time.urgent ? 'rgba(239,68,68,0.1)' : 'rgba(16,185,129,0.1)',
-                  padding: '6px 10px', borderRadius: '8px',
+                  padding: isMobile ? '6px 8px' : '6px 10px', borderRadius: '8px',
                   fontFamily: 'monospace',
-                  whiteSpace: 'nowrap', // ✅ FIX: removed minWidth: 100px
-                  flexShrink: 0        // ✅ FIX: don't shrink timer
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                  alignSelf: isMobile ? 'flex-start' : 'auto'
                 }}>
                   {time.text}
                 </div>

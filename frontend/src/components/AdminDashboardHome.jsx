@@ -34,10 +34,10 @@ export default function AdminDashboardHome() {
   const [adminNote, setAdminNote] = useState('')
   const [updating, setUpdating] = useState(false)
   const [viewFile, setViewFile] = useState(null)
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 900) // ✅ ADD
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 900)
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [])
@@ -308,7 +308,7 @@ export default function AdminDashboardHome() {
       {/* ✅ FIX: Stats grid - 3 cols on mobile, 5 on desktop */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: isMobile ? 'repeat(3,1fr)' : 'repeat(5,1fr)',
+        gridTemplateColumns: isMobile ? 'repeat(2,minmax(0,1fr))' : 'repeat(5,1fr)',
         gap: '12px'
       }}>
         {[
@@ -320,14 +320,14 @@ export default function AdminDashboardHome() {
         ].map(c => (
           <div key={c.label} style={{
             background: c.bg, border: `1px solid ${c.border}`,
-            borderRadius: '16px', padding: isMobile ? '12px 8px' : '18px 16px',
+            borderRadius: '16px', padding: isMobile ? '12px 10px' : '18px 16px',
             textAlign: isMobile ? 'center' : 'left'
           }}>
             <div style={{ fontSize: isMobile ? '18px' : '22px', marginBottom: '8px' }}>{c.icon}</div>
-            <div style={{ fontSize: isMobile ? '22px' : '28px', fontWeight: '800', color: c.color, lineHeight: 1 }}>
+            <div style={{ fontSize: isMobile ? '20px' : '28px', fontWeight: '800', color: c.color, lineHeight: 1 }}>
               {c.value ?? 0}
             </div>
-            <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '6px', fontWeight: '500' }}>
+            <div style={{ fontSize: isMobile ? '10px' : '11px', color: '#6b7280', marginTop: '6px', fontWeight: '500', lineHeight: 1.3 }}>
               {c.label}
             </div>
           </div>
@@ -371,13 +371,13 @@ export default function AdminDashboardHome() {
               }}>🗂️ Archive Done</button>
             </div>
           </div>
-          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: isMobile ? 'nowrap' : 'wrap', overflowX: isMobile ? 'auto' : 'visible', WebkitOverflowScrolling: 'touch', paddingBottom: isMobile ? '2px' : 0 }}>
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="🔍 Search by title, student, department, roll no..."
               style={{
-                flex: 1, minWidth: '200px',
+                flex: isMobile ? '1 0 220px' : 1, minWidth: isMobile ? '220px' : '200px',
                 background: 'rgba(255,255,255,0.05)',
                 border: '1px solid rgba(255,255,255,0.1)',
                 borderRadius: '8px', padding: '9px 14px',
@@ -385,10 +385,10 @@ export default function AdminDashboardHome() {
                 fontFamily: 'Inter, sans-serif'
               }}
             />
-            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', flex: isMobile ? '0 0 auto' : 'initial' }}>
               {['all', 'waiting', 'active', 'completed', 'failed'].map(f => (
                 <button key={f} onClick={() => setFilter(f)} style={{
-                  padding: '8px 14px', borderRadius: '8px', border: 'none',
+                  padding: isMobile ? '8px 12px' : '8px 14px', borderRadius: '8px', border: 'none',
                   background: filter === f ? 'rgba(124,58,237,0.3)' : 'rgba(255,255,255,0.05)',
                   color: filter === f ? '#a78bfa' : '#6b7280',
                   fontSize: '12px', fontWeight: '600', cursor: 'pointer',
@@ -460,7 +460,17 @@ export default function AdminDashboardHome() {
                       {typeConfig[job.type]?.icon} {typeConfig[job.type]?.label}
                     </td>
                     <td style={{ padding: '14px 16px', whiteSpace: 'nowrap' }}>
-                      <span style={{ color: priorityConfig[job.priority]?.color, fontWeight: '600', fontSize: '12px' }}>
+                      <span style={{
+                        color: priorityConfig[job.priority]?.color,
+                        fontWeight: '700',
+                        fontSize: isMobile ? '10px' : '12px',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        padding: isMobile ? '4px 8px' : '0',
+                        borderRadius: isMobile ? '999px' : '0',
+                        background: isMobile ? 'rgba(255,255,255,0.04)' : 'transparent',
+                        border: isMobile ? '1px solid rgba(255,255,255,0.08)' : 'none'
+                      }}>
                         {priorityConfig[job.priority]?.label}
                       </span>
                     </td>
