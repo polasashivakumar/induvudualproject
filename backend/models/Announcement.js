@@ -10,6 +10,7 @@ const announcementSchema = new mongoose.Schema({
   },
   createdBy: { type: String },
   pinned: { type: Boolean, default: false },
+  readBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 }, { timestamps: true });
 
 module.exports = mongoose.model('Announcement', announcementSchema);

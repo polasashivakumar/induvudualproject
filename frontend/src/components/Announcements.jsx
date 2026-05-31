@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import API from '../api/axios'
 import { useTheme } from '../context/ThemeContext'
 import toast from 'react-hot-toast'
+import useSocket from '../hooks/useSocket'
+import { useAuth } from '../context/AuthContext'
 
 export default function Announcements({ isAdmin }) {
   const [announcements, setAnnouncements] = useState([])
@@ -17,6 +19,16 @@ export default function Announcements({ isAdmin }) {
     } catch {}
     setLoading(false)
   }
+
+  // realtime: new announcements
+  useSocket({ events: {
+    'announcement:new': (a) => {
+      try { toast(`${a.title} — ${a.message}`, { icon: '📢' }) } catch (e) {}
+      fetchAnnouncements()
+    }
+  } })
+
+  const { user } = useAuth()
 
   const postAnnouncement = async () => {
     if (!form.title || !form.message) return toast.error('Fill all fields!')
@@ -34,6 +46,13 @@ export default function Announcements({ isAdmin }) {
     try {
       await API.delete(`/announcements/${id}`)
       toast.success('Deleted!')
+      fetchAnnouncements()
+    } catch { toast.error('Failed') }
+  }
+
+  const markRead = async (id) => {
+    try {
+      await API.put(`/announcements/${id}/read`)
       fetchAnnouncements()
     } catch { toast.error('Failed') }
   }
@@ -154,7 +173,17 @@ export default function Announcements({ isAdmin }) {
                         <span style={{ color: colors.text, fontWeight: '700', fontSize: '14px' }}>
                           {a.title}
                         </span>
-                      </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginLeft: '12px' }}>
+                          {!a.read && !isAdmin && (
+                            <button onClick={() => markRead(a._id)} style={{
+                              padding: '6px 10px', flexShrink: 0,
+                              background: 'rgba(16,185,129,0.08)',
+                              border: '1px solid rgba(16,185,129,0.12)',
+                              borderRadius: '6px', color: '#10b981',
+                              fontSize: '11px', cursor: 'pointer', fontWeight: '700'
+                            }}>✅ Mark read</button>
+                          )}
+                          {isAdmin && (
                       <p style={{ color: colors.textSecondary, fontSize: '13px', lineHeight: 1.6, marginBottom: '8px' }}>
                         {a.message}
                       </p>
@@ -162,7 +191,9 @@ export default function Announcements({ isAdmin }) {
                         📅 {new Date(a.createdAt).toLocaleString()} • By Admin
                       </p>
                     </div>
-                    {isAdmin && (
+                          }}>🗑️</button>
+                          )}
+                        </div>
                       <button onClick={() => deleteAnnouncement(a._id)} style={{
                         marginLeft: '12px', padding: '4px 10px', flexShrink: 0,
                         background: 'rgba(239,68,68,0.1)',
