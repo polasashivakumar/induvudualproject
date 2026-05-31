@@ -31,13 +31,13 @@ export default function Dashboard() {
   const [stats, setStats] = useState({})
   const [jobs, setJobs] = useState([])
   const [aiSuggestion, setAiSuggestion] = useState(null)
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 900)
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024)
   const { user } = useAuth()
   const { colors } = useTheme()
   const { t } = useTranslation()
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 900)
+    const handleResize = () => setIsMobile(window.innerWidth < 1024)
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [])
