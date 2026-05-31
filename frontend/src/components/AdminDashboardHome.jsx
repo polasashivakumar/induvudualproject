@@ -34,6 +34,13 @@ export default function AdminDashboardHome() {
   const [adminNote, setAdminNote] = useState('')
   const [updating, setUpdating] = useState(false)
   const [viewFile, setViewFile] = useState(null)
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 900) // ✅ ADD
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 900)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   const fetchAll = async () => {
     try {
@@ -112,7 +119,7 @@ export default function AdminDashboardHome() {
   ).length
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', width: '100%', overflow: 'hidden' }}>
 
       {/* File viewer */}
       {viewFile && (
@@ -187,9 +194,8 @@ export default function AdminDashboardHome() {
         }}>
           <div style={{
             background: '#0f1117', border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: '20px', padding: '32px', width: '100%', maxWidth: '480px'
+            borderRadius: '20px', padding: '32px', width: '90%', maxWidth: '480px'
           }}>
-            {/* Modal header */}
             <div style={{ marginBottom: '20px' }}>
               <h3 style={{ color: '#fff', fontWeight: '700', fontSize: '18px', marginBottom: '4px' }}>
                 ✏️ Update Task Status
@@ -198,17 +204,12 @@ export default function AdminDashboardHome() {
                 {typeConfig[selectedJob.type]?.icon} {selectedJob.title}
               </p>
               <div style={{ display: 'flex', gap: '8px', marginTop: '8px', flexWrap: 'wrap' }}>
-                <span style={{ fontSize: '12px', color: '#9ca3af' }}>
-                  👤 {selectedJob.userName}
-                </span>
+                <span style={{ fontSize: '12px', color: '#9ca3af' }}>👤 {selectedJob.userName}</span>
                 {selectedJob.department && (
-                  <span style={{ fontSize: '12px', color: '#a78bfa' }}>
-                    • {selectedJob.department}
-                  </span>
+                  <span style={{ fontSize: '12px', color: '#a78bfa' }}>• {selectedJob.department}</span>
                 )}
                 <span style={{
-                  fontSize: '11px', fontWeight: '700', padding: '1px 8px',
-                  borderRadius: '12px',
+                  fontSize: '11px', fontWeight: '700', padding: '1px 8px', borderRadius: '12px',
                   background: stateConfig[selectedJob.state]?.bg,
                   color: stateConfig[selectedJob.state]?.color
                 }}>
@@ -216,8 +217,6 @@ export default function AdminDashboardHome() {
                 </span>
               </div>
             </div>
-
-            {/* Note */}
             <div style={{ marginBottom: '16px' }}>
               <label style={{ display: 'block', fontSize: '12px', color: '#9ca3af', marginBottom: '8px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                 Feedback Note for Student
@@ -233,12 +232,8 @@ export default function AdminDashboardHome() {
                   padding: '12px', color: '#fff', fontSize: '14px', outline: 'none',
                   fontFamily: 'Inter, sans-serif', resize: 'vertical', boxSizing: 'border-box'
                 }}
-                onFocus={e => e.target.style.borderColor = '#7c3aed'}
-                onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
               />
             </div>
-
-            {/* Status buttons */}
             <p style={{ fontSize: '12px', color: '#9ca3af', marginBottom: '10px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
               Change Status To:
             </p>
@@ -248,40 +243,35 @@ export default function AdminDashboardHome() {
                 { state: 'completed', icon: '✅', label: 'Completed' },
                 { state: 'failed', icon: '❌', label: 'Failed' },
               ].map(s => (
-                <button
-                  key={s.state}
-                  onClick={() => updateStatus(selectedJob._id, s.state)}
-                  disabled={updating}
-                  style={{
+                <button key={s.state} onClick={() => updateStatus(selectedJob._id, s.state)}
+                  disabled={updating} style={{
                     padding: '14px 8px', borderRadius: '12px', border: 'none',
                     cursor: updating ? 'not-allowed' : 'pointer',
-                    background: stateConfig[s.state]?.bg,
-                    color: stateConfig[s.state]?.color,
-                    fontWeight: '700', fontSize: '13px',
-                    fontFamily: 'Inter, sans-serif',
-                    transition: 'all 0.2s', textAlign: 'center',
+                    background: stateConfig[s.state]?.bg, color: stateConfig[s.state]?.color,
+                    fontWeight: '700', fontSize: '13px', fontFamily: 'Inter, sans-serif',
                     opacity: updating ? 0.6 : 1
-                  }}
-                >
+                  }}>
                   <div style={{ fontSize: '20px', marginBottom: '4px' }}>{s.icon}</div>
                   {updating ? '...' : s.label}
                 </button>
               ))}
             </div>
-
             <button onClick={() => { setSelectedJob(null); setAdminNote('') }} style={{
               width: '100%', padding: '11px', background: 'rgba(255,255,255,0.05)',
               border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px',
-              color: '#9ca3af', cursor: 'pointer', fontFamily: 'Inter, sans-serif',
-              fontWeight: '600', fontSize: '14px'
+              color: '#9ca3af', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: '600'
             }}>Cancel</button>
           </div>
         </div>
       )}
 
-      {/* Alert banners */}
+      {/* ✅ FIX: Alert banners stack on mobile */}
       {(urgentCount > 0 || overdueCount > 0) && (
-        <div style={{ display: 'grid', gridTemplateColumns: urgentCount > 0 && overdueCount > 0 ? '1fr 1fr' : '1fr', gap: '12px' }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: (!isMobile && urgentCount > 0 && overdueCount > 0) ? '1fr 1fr' : '1fr',
+          gap: '12px'
+        }}>
           {urgentCount > 0 && (
             <div style={{
               background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)',
@@ -315,8 +305,12 @@ export default function AdminDashboardHome() {
         </div>
       )}
 
-      {/* Stats row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: '12px' }}>
+      {/* ✅ FIX: Stats grid - 3 cols on mobile, 5 on desktop */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: isMobile ? 'repeat(3,1fr)' : 'repeat(5,1fr)',
+        gap: '12px'
+      }}>
         {[
           { label: 'Total Tasks', value: stats.total, icon: '📋', color: '#7c3aed', bg: 'rgba(124,58,237,0.1)', border: 'rgba(124,58,237,0.2)' },
           { label: 'Waiting', value: stats.waiting, icon: '⏳', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.2)' },
@@ -326,14 +320,11 @@ export default function AdminDashboardHome() {
         ].map(c => (
           <div key={c.label} style={{
             background: c.bg, border: `1px solid ${c.border}`,
-            borderRadius: '16px', padding: '18px 16px',
-            transition: 'transform 0.2s', cursor: 'default'
-          }}
-            onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'}
-            onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}
-          >
-            <div style={{ fontSize: '22px', marginBottom: '8px' }}>{c.icon}</div>
-            <div style={{ fontSize: '28px', fontWeight: '800', color: c.color, lineHeight: 1 }}>
+            borderRadius: '16px', padding: isMobile ? '12px 8px' : '18px 16px',
+            textAlign: isMobile ? 'center' : 'left'
+          }}>
+            <div style={{ fontSize: isMobile ? '18px' : '22px', marginBottom: '8px' }}>{c.icon}</div>
+            <div style={{ fontSize: isMobile ? '22px' : '28px', fontWeight: '800', color: c.color, lineHeight: 1 }}>
               {c.value ?? 0}
             </div>
             <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '6px', fontWeight: '500' }}>
@@ -348,16 +339,13 @@ export default function AdminDashboardHome() {
         background: 'rgba(17,24,39,0.6)', border: '1px solid rgba(255,255,255,0.08)',
         borderRadius: '20px', overflow: 'hidden', backdropFilter: 'blur(10px)'
       }}>
-        {/* Table header */}
         <div style={{
           padding: '20px 24px', borderBottom: '1px solid rgba(255,255,255,0.06)',
           display: 'flex', flexDirection: 'column', gap: '12px'
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
             <div>
-              <h3 style={{ color: '#fff', fontWeight: '700', fontSize: '16px' }}>
-                📋 All Student Tasks
-              </h3>
+              <h3 style={{ color: '#fff', fontWeight: '700', fontSize: '16px' }}>📋 All Student Tasks</h3>
               <p style={{ color: '#4b5563', fontSize: '12px', marginTop: '2px' }}>
                 {filtered.length} tasks • Auto-refreshes every 5s
               </p>
@@ -383,23 +371,19 @@ export default function AdminDashboardHome() {
               }}>🗂️ Archive Done</button>
             </div>
           </div>
-
-          {/* Search + filters */}
           <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="🔍 Search by title, student, department, roll no..."
               style={{
-                flex: 1, minWidth: '250px',
+                flex: 1, minWidth: '200px',
                 background: 'rgba(255,255,255,0.05)',
                 border: '1px solid rgba(255,255,255,0.1)',
                 borderRadius: '8px', padding: '9px 14px',
                 color: '#fff', fontSize: '13px', outline: 'none',
                 fontFamily: 'Inter, sans-serif'
               }}
-              onFocus={e => e.target.style.borderColor = '#7c3aed'}
-              onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
             />
             <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
               {['all', 'waiting', 'active', 'completed', 'failed'].map(f => (
@@ -417,7 +401,6 @@ export default function AdminDashboardHome() {
           </div>
         </div>
 
-        {/* Table body */}
         {loading ? (
           <div style={{ padding: '60px', textAlign: 'center', color: '#4b5563' }}>
             <div style={{ fontSize: '32px', marginBottom: '12px' }}>⏳</div>Loading...
@@ -428,8 +411,8 @@ export default function AdminDashboardHome() {
             <p style={{ color: '#6b7280', fontWeight: '500' }}>No tasks found</p>
           </div>
         ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+          <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', minWidth: '700px' }}>
               <thead>
                 <tr style={{ background: 'rgba(255,255,255,0.03)' }}>
                   {['Task', 'Student', 'Type', 'Priority', 'Status', 'Due', 'Files', 'Actions'].map(h => (
@@ -447,25 +430,16 @@ export default function AdminDashboardHome() {
                   <tr key={job._id} style={{
                     borderBottom: '1px solid rgba(255,255,255,0.04)',
                     background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.01)',
-                    transition: 'background 0.15s'
-                  }}
-                    onMouseOver={e => e.currentTarget.style.background = 'rgba(124,58,237,0.05)'}
-                    onMouseOut={e => e.currentTarget.style.background = i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.01)'}
-                  >
-                    {/* Task */}
+                  }}>
                     <td style={{ padding: '14px 16px', maxWidth: '200px' }}>
                       <div style={{ color: '#e5e7eb', fontWeight: '600', fontSize: '13px', marginBottom: '2px' }}>
                         {job.title}
                         {job.isResubmission && (
-                          <span style={{ marginLeft: '6px', fontSize: '10px', color: '#60a5fa', background: 'rgba(59,130,246,0.1)', padding: '1px 5px', borderRadius: '4px' }}>
-                            🔄
-                          </span>
+                          <span style={{ marginLeft: '6px', fontSize: '10px', color: '#60a5fa', background: 'rgba(59,130,246,0.1)', padding: '1px 5px', borderRadius: '4px' }}>🔄</span>
                         )}
                       </div>
                       {job.description && (
-                        <div style={{ color: '#4b5563', fontSize: '11px' }}>
-                          {job.description.substring(0, 40)}...
-                        </div>
+                        <div style={{ color: '#4b5563', fontSize: '11px' }}>{job.description.substring(0, 40)}...</div>
                       )}
                       {job.adminNote && (
                         <div style={{ color: '#a78bfa', fontSize: '10px', marginTop: '3px', padding: '2px 6px', background: 'rgba(124,58,237,0.1)', borderRadius: '4px', display: 'inline-block' }}>
@@ -473,33 +447,23 @@ export default function AdminDashboardHome() {
                         </div>
                       )}
                     </td>
-
-                    {/* Student */}
                     <td style={{ padding: '14px 16px', whiteSpace: 'nowrap' }}>
                       <div style={{ color: '#e5e7eb', fontWeight: '500', fontSize: '13px' }}>{job.userName}</div>
                       <div style={{ color: '#4b5563', fontSize: '11px' }}>{job.rollNumber}</div>
                       {job.department && (
-                        <div style={{ marginTop: '3px' }}>
-                          <span style={{ fontSize: '10px', fontWeight: '700', padding: '1px 6px', borderRadius: '4px', background: 'rgba(124,58,237,0.15)', color: '#a78bfa' }}>
-                            {job.department}
-                          </span>
-                        </div>
+                        <span style={{ fontSize: '10px', fontWeight: '700', padding: '1px 6px', borderRadius: '4px', background: 'rgba(124,58,237,0.15)', color: '#a78bfa' }}>
+                          {job.department}
+                        </span>
                       )}
                     </td>
-
-                    {/* Type */}
                     <td style={{ padding: '14px 16px', color: '#9ca3af', whiteSpace: 'nowrap' }}>
                       {typeConfig[job.type]?.icon} {typeConfig[job.type]?.label}
                     </td>
-
-                    {/* Priority */}
                     <td style={{ padding: '14px 16px', whiteSpace: 'nowrap' }}>
                       <span style={{ color: priorityConfig[job.priority]?.color, fontWeight: '600', fontSize: '12px' }}>
                         {priorityConfig[job.priority]?.label}
                       </span>
                     </td>
-
-                    {/* Status */}
                     <td style={{ padding: '14px 16px' }}>
                       <span style={{
                         padding: '4px 10px', borderRadius: '20px',
@@ -509,27 +473,16 @@ export default function AdminDashboardHome() {
                       }}>
                         {stateConfig[job.state]?.label}
                       </span>
-                      {job.rating && (
-                        <div style={{ color: '#f59e0b', fontSize: '10px', marginTop: '3px' }}>
-                          ⭐ {job.rating}/5
-                        </div>
-                      )}
+                      {job.rating && <div style={{ color: '#f59e0b', fontSize: '10px', marginTop: '3px' }}>⭐ {job.rating}/5</div>}
                     </td>
-
-                    {/* Due date */}
                     <td style={{ padding: '14px 16px', fontSize: '12px', whiteSpace: 'nowrap' }}>
                       {job.dueDate ? (
-                        <span style={{
-                          color: new Date(job.dueDate) < new Date() && job.state !== 'completed'
-                            ? '#ef4444' : '#6b7280'
-                        }}>
+                        <span style={{ color: new Date(job.dueDate) < new Date() && job.state !== 'completed' ? '#ef4444' : '#6b7280' }}>
                           {new Date(job.dueDate) < new Date() && job.state !== 'completed' ? '⚠️ ' : ''}
                           {new Date(job.dueDate).toLocaleDateString()}
                         </span>
                       ) : '—'}
                     </td>
-
-                    {/* Files */}
                     <td style={{ padding: '14px 16px' }}>
                       {job.attachments?.length > 0 ? (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -537,43 +490,26 @@ export default function AdminDashboardHome() {
                             <button key={fi} onClick={() => setViewFile(f)} style={{
                               padding: '3px 8px', background: 'rgba(124,58,237,0.15)',
                               border: '1px solid rgba(124,58,237,0.3)', borderRadius: '5px',
-                              color: '#a78bfa', fontSize: '10px', fontWeight: '500',
-                              cursor: 'pointer', fontFamily: 'Inter, sans-serif',
-                              display: 'flex', alignItems: 'center', gap: '3px',
-                              whiteSpace: 'nowrap', maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis'
+                              color: '#a78bfa', fontSize: '10px', cursor: 'pointer',
+                              fontFamily: 'Inter, sans-serif', whiteSpace: 'nowrap'
                             }}>
                               👁️ {f.name.substring(0, 12)}{f.name.length > 12 ? '...' : ''}
                             </button>
                           ))}
                           {job.attachments.length > 2 && (
-                            <span style={{ color: '#4b5563', fontSize: '10px' }}>
-                              +{job.attachments.length - 2} more
-                            </span>
+                            <span style={{ color: '#4b5563', fontSize: '10px' }}>+{job.attachments.length - 2} more</span>
                           )}
                         </div>
-                      ) : (
-                        <span style={{ color: '#374151', fontSize: '12px' }}>—</span>
-                      )}
+                      ) : <span style={{ color: '#374151', fontSize: '12px' }}>—</span>}
                     </td>
-
-                    {/* Actions */}
                     <td style={{ padding: '14px 16px' }}>
-                      <button
-                        onClick={() => { setSelectedJob(job); setAdminNote(job.adminNote || '') }}
-                        style={{
-                          padding: '7px 14px',
-                          background: 'linear-gradient(135deg, rgba(124,58,237,0.3), rgba(79,70,229,0.2))',
-                          border: '1px solid rgba(124,58,237,0.4)',
-                          borderRadius: '8px', color: '#a78bfa',
-                          fontSize: '12px', fontWeight: '600',
-                          cursor: 'pointer', fontFamily: 'Inter, sans-serif',
-                          whiteSpace: 'nowrap', transition: 'all 0.2s'
-                        }}
-                        onMouseOver={e => e.currentTarget.style.background = 'rgba(124,58,237,0.4)'}
-                        onMouseOut={e => e.currentTarget.style.background = 'linear-gradient(135deg, rgba(124,58,237,0.3), rgba(79,70,229,0.2))'}
-                      >
-                        ✏️ Update
-                      </button>
+                      <button onClick={() => { setSelectedJob(job); setAdminNote(job.adminNote || '') }} style={{
+                        padding: '7px 14px',
+                        background: 'linear-gradient(135deg, rgba(124,58,237,0.3), rgba(79,70,229,0.2))',
+                        border: '1px solid rgba(124,58,237,0.4)', borderRadius: '8px',
+                        color: '#a78bfa', fontSize: '12px', fontWeight: '600',
+                        cursor: 'pointer', fontFamily: 'Inter, sans-serif', whiteSpace: 'nowrap'
+                      }}>✏️ Update</button>
                     </td>
                   </tr>
                 ))}
@@ -584,4 +520,4 @@ export default function AdminDashboardHome() {
       </div>
     </div>
   )
-}
+           }
