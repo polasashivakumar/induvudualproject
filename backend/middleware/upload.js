@@ -3,7 +3,6 @@ const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
 
-// Create uploads folder if not exists
 const uploadDir = path.join(__dirname, '../uploads');
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
@@ -16,7 +15,12 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-  const allowed = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png', '.txt', '.zip'];
+  const allowed = [
+    '.pdf', '.doc', '.docx',
+    '.jpg', '.jpeg', '.png', '.gif', '.webp',
+    '.txt', '.zip',
+    '.mp4', '.mov', '.avi', '.mkv', '.webm'  // video formats
+  ];
   const ext = path.extname(file.originalname).toLowerCase();
   if (allowed.includes(ext)) cb(null, true);
   else cb(new Error('File type not allowed'));
@@ -25,7 +29,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 10 * 1024 * 1024 } // 10MB
+  limits: { fileSize: 100 * 1024 * 1024 } // 100MB for videos
 });
 
 module.exports = upload;
