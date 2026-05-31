@@ -84,36 +84,27 @@ export default function Dashboard() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%', overflow: 'hidden' }}>
           <StatsCards onStatsLoad={setStats} />
 
-          {/* ✅ FIX: stack on mobile, side by side on desktop */}
+          {/* ✅ FIX: Progress + Countdown — stack on mobile */}
           <div style={{
             display: 'grid',
             gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
             gap: '16px',
-            width: '100%',
-            overflow: 'hidden'
+            width: '100%'
           }}>
-            <div style={{ minWidth: 0, overflow: 'hidden' }}>
-              <ProgressCard stats={stats} />
-            </div>
-            <div style={{ minWidth: 0, overflow: 'hidden' }}>
-              <CountdownTimer jobs={jobs} />
-            </div>
+            <div style={{ minWidth: 0 }}><ProgressCard stats={stats} /></div>
+            <div style={{ minWidth: 0 }}><CountdownTimer jobs={jobs} /></div>
           </div>
 
+          {/* ✅ FIX: Analytics + Badges — only on desktop */}
           {!isMobile && (
             <div style={{
               display: 'grid',
               gridTemplateColumns: '1fr 1fr',
               gap: '16px',
-              width: '100%',
-              overflow: 'hidden'
+              width: '100%'
             }}>
-              <div style={{ minWidth: 0, overflow: 'hidden' }}>
-                <AnalyticsChart />
-              </div>
-              <div style={{ minWidth: 0, overflow: 'hidden' }}>
-                <BadgesCard />
-              </div>
+              <div style={{ minWidth: 0 }}><AnalyticsChart /></div>
+              <div style={{ minWidth: 0 }}><BadgesCard /></div>
             </div>
           )}
           {isMobile && <BadgesCard />}
@@ -193,8 +184,8 @@ export default function Dashboard() {
         padding: isMobile ? '16px' : '24px 32px',
         maxWidth: '1400px',
         margin: '0 auto',
-        width: '100%',       // ✅ FIX
-        overflowX: 'hidden'  // ✅ FIX
+        width: '100%',      // ✅ FIX
+        overflowX: 'hidden' // ✅ FIX
       }}>
         {/* Welcome banner */}
         <div style={{
