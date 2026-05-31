@@ -66,14 +66,19 @@ export default function ActivityHeatmap() {
     return max
   })()
 
-  const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-
   return (
     <div style={{
       background: colors.card, border: `1px solid ${colors.cardBorder}`,
-      borderRadius: '20px', padding: '24px'
+      borderRadius: '20px', padding: '24px',
+      overflow: 'hidden',  // ✅ FIX: clip overflowing heatmap
+      maxWidth: '100%'     // ✅ FIX
     }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+      {/* Header */}
+      <div style={{
+        display: 'flex', justifyContent: 'space-between',
+        alignItems: 'center', marginBottom: '20px',
+        flexWrap: 'wrap', gap: '12px'  // ✅ FIX: wrap on mobile
+      }}>
         <div>
           <h3 style={{ color: colors.text, fontWeight: '700', fontSize: '16px' }}>
             🗺️ Activity Heatmap
@@ -96,9 +101,13 @@ export default function ActivityHeatmap() {
         </div>
       </div>
 
-      {/* Heatmap grid */}
-      <div style={{ overflowX: 'auto' }}>
-        <div style={{ display: 'flex', gap: '3px', minWidth: 'fit-content' }}>
+      {/* ✅ FIX: heatmap scrolls internally, doesn't push page */}
+      <div style={{
+        overflowX: 'auto',
+        WebkitOverflowScrolling: 'touch',
+        maxWidth: '100%'
+      }}>
+        <div style={{ display: 'flex', gap: '3px', minWidth: 'fit-content', paddingBottom: '4px' }}>
           {weeks.map((week, wi) => (
             <div key={wi} style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
               {week.map((day, di) => (
@@ -110,7 +119,8 @@ export default function ActivityHeatmap() {
                     background: day ? getColor(day.count) : 'transparent',
                     border: day ? `1px solid ${colors.cardBorder}` : 'none',
                     cursor: day ? 'pointer' : 'default',
-                    transition: 'transform 0.1s'
+                    transition: 'transform 0.1s',
+                    flexShrink: 0  // ✅ FIX: prevent cells from shrinking
                   }}
                   onMouseOver={e => day && (e.currentTarget.style.transform = 'scale(1.4)')}
                   onMouseOut={e => (e.currentTarget.style.transform = 'scale(1)')}
