@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="College Task Queue icon">
+  <defs>
+    <linearGradient id="bg" x1="64" y1="48" x2="448" y2="464" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0f172a"/>
+      <stop offset="1" stop-color="#030712"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="120" y1="116" x2="392" y2="396" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#8b5cf6"/>
+      <stop offset="0.5" stop-color="#6366f1"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+  </defs>
+  <rect x="24" y="24" width="464" height="464" rx="108" fill="url(#bg)"/>
+  <rect x="120" y="108" width="272" height="316" rx="40" fill="#111827" stroke="url(#accent)" stroke-width="16"/>
+  <rect x="176" y="80" width="160" height="58" rx="20" fill="url(#accent)"/>
+  <rect x="168" y="190" width="176" height="24" rx="12" fill="#e5e7eb" opacity="0.95"/>
+  <rect x="168" y="248" width="136" height="24" rx="12" fill="#cbd5e1" opacity="0.9"/>
+  <rect x="168" y="306" width="160" height="24" rx="12" fill="#94a3b8" opacity="0.9"/>
+  <circle cx="332" cy="202" r="18" fill="#22d3ee"/>
+  <circle cx="332" cy="260" r="18" fill="#8b5cf6"/>
+  <circle cx="332" cy="318" r="18" fill="#f59e0b"/>
+  <path d="M218 372c26 26 68 26 94 0" fill="none" stroke="#22d3ee" stroke-linecap="round" stroke-width="16"/>
+  <path d="M190 158h132" fill="none" stroke="#334155" stroke-linecap="round" stroke-width="14"/>
+  <path d="M210 158v-18" fill="none" stroke="#334155" stroke-linecap="round" stroke-width="14"/>
+  <path d="M302 158v-18" fill="none" stroke="#334155" stroke-linecap="round" stroke-width="14"/>
+</svg>
