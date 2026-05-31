@@ -47,8 +47,8 @@ export default function StatsCards({ onStatsLoad }) {
       </div>
       <div style={{
         display: 'grid',
-        gridTemplateColumns: isMobile ? 'repeat(3,1fr)' : 'repeat(5,1fr)',
-        gap: isMobile ? '8px' : '12px'
+        gridTemplateColumns: isMobile ? 'repeat(2, minmax(0, 1fr))' : 'repeat(5, minmax(0, 1fr))',
+        gap: isMobile ? '10px' : '12px'
       }}>
         {cards.map(({ label, value, icon, color, bg, border }) => (
           <div key={label} style={{
@@ -63,7 +63,7 @@ export default function StatsCards({ onStatsLoad }) {
             <div style={{ fontSize: isMobile ? '22px' : '28px', fontWeight: '800', color, lineHeight: 1 }}>
               {value ?? 0}
             </div>
-            <div style={{ fontSize: '11px', color: colors.textMuted, marginTop: '4px', fontWeight: '500' }}>
+            <div style={{ fontSize: isMobile ? '10px' : '11px', color: colors.textMuted, marginTop: '4px', fontWeight: '500' }}>
               {label}
             </div>
           </div>

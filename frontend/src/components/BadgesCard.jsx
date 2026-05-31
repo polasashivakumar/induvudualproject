@@ -12,6 +12,7 @@ const allBadges = [
 
 export default function BadgesCard() {
   const [earned, setEarned] = useState([])
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
 
   useEffect(() => {
     const fetch = async () => {
@@ -23,13 +24,21 @@ export default function BadgesCard() {
     fetch()
   }, [])
 
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   return (
     <div style={{
       background: 'rgba(17,24,39,0.6)', border: '1px solid rgba(255,255,255,0.08)',
-      borderRadius: '20px', padding: '24px', backdropFilter: 'blur(10px)'
+      borderRadius: '20px', padding: isMobile ? '18px' : '24px', backdropFilter: 'blur(10px)',
+      minWidth: 0,
+      overflow: 'hidden'
     }}>
       <div style={{ marginBottom: '16px' }}>
-        <h3 style={{ color: '#fff', fontWeight: '700', fontSize: '16px' }}>
+        <h3 style={{ color: '#fff', fontWeight: '700', fontSize: isMobile ? '15px' : '16px' }}>
           🏅 Achievement Badges
         </h3>
         <p style={{ color: '#4b5563', fontSize: '12px', marginTop: '2px' }}>
@@ -37,7 +46,7 @@ export default function BadgesCard() {
         </p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '10px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, minmax(0, 1fr))' : 'repeat(3, minmax(0, 1fr))', gap: '10px' }}>
         {allBadges.map(badge => {
           const isEarned = earned.includes(badge.id)
           return (
@@ -48,11 +57,11 @@ export default function BadgesCard() {
               transition: 'all 0.2s', opacity: isEarned ? 1 : 0.4,
               filter: isEarned ? 'none' : 'grayscale(1)'
             }}>
-              <div style={{ fontSize: '28px', marginBottom: '6px' }}>{badge.icon}</div>
-              <div style={{ fontSize: '11px', fontWeight: '700', color: isEarned ? '#f59e0b' : '#4b5563', marginBottom: '2px' }}>
+              <div style={{ fontSize: isMobile ? '24px' : '28px', marginBottom: '6px' }}>{badge.icon}</div>
+              <div style={{ fontSize: '11px', fontWeight: '700', color: isEarned ? '#f59e0b' : '#4b5563', marginBottom: '2px', lineHeight: 1.2 }}>
                 {badge.name}
               </div>
-              <div style={{ fontSize: '10px', color: '#374151' }}>{badge.desc}</div>
+              <div style={{ fontSize: '10px', color: '#374151', lineHeight: 1.3 }}>{badge.desc}</div>
               {isEarned && (
                 <div style={{ marginTop: '6px', fontSize: '10px', color: '#10b981', fontWeight: '600' }}>
                   ✅ Earned!

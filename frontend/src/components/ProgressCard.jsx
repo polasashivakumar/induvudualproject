@@ -1,7 +1,15 @@
+import { useEffect, useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 
 export default function ProgressCard({ stats }) {
   const { user } = useAuth()
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   const completionRate = stats?.total
     ? Math.round((stats.completed / stats.total) * 100)
@@ -20,7 +28,7 @@ export default function ProgressCard({ stats }) {
     <div style={{
       background: 'linear-gradient(135deg, rgba(124,58,237,0.15), rgba(79,70,229,0.1))',
       border: '1px solid rgba(124,58,237,0.2)',
-      borderRadius: '20px', padding: '24px',
+      borderRadius: '20px', padding: isMobile ? '18px' : '24px',
       minWidth: 0,        // ✅ FIX
       overflow: 'hidden'  // ✅ FIX
     }}>
@@ -72,7 +80,7 @@ export default function ProgressCard({ stats }) {
       </div>
 
       {/* Mini stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '8px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, minmax(0, 1fr))' : 'repeat(4, minmax(0, 1fr))', gap: '8px' }}>
         {[
           { label: 'Total', value: stats?.total || 0, color: '#a78bfa' },
           { label: 'Waiting', value: stats?.waiting || 0, color: '#f59e0b' },
@@ -83,7 +91,7 @@ export default function ProgressCard({ stats }) {
             background: 'rgba(0,0,0,0.2)',
             borderRadius: '10px', padding: '10px 8px', textAlign: 'center'
           }}>
-            <div style={{ fontSize: '20px', fontWeight: '800', color: s.color }}>{s.value}</div>
+            <div style={{ fontSize: isMobile ? '18px' : '20px', fontWeight: '800', color: s.color }}>{s.value}</div>
             <div style={{ fontSize: '10px', color: '#6b7280', marginTop: '2px' }}>{s.label}</div>
           </div>
         ))}
