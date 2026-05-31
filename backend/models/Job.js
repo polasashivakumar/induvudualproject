@@ -34,6 +34,7 @@ const jobSchema = new mongoose.Schema({
     enum: ['assignment', 'lab_report', 'project_review', 'library_request', 'print_request'],
     required: true
   },
+  priority: { type: Number, default: 2 },
   title: { type: String, required: true },
   description: { type: String, default: '' },
   urgency: {
@@ -43,8 +44,8 @@ const jobSchema = new mongoose.Schema({
   },
   state: {
     type: String,
-    enum: ['pending', 'active', 'completed', 'failed'],
-    default: 'pending'
+    enum: ['waiting', 'active', 'completed', 'failed'],
+    default: 'waiting'
   },
   // Approval
   approvalStatus: {
