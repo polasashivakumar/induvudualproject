@@ -1,3 +1,4 @@
+jest.mock('../utils/badges', () => ({ checkAndAwardBadges: jest.fn().mockResolvedValue([]) }));
 const { processJob } = require('../worker');
 const Job = require('../models/Job');
 

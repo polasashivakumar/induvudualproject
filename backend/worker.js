@@ -34,6 +34,17 @@ const processJob = async (job, io) => {
 
     console.log(`✅ Completed: ${job.title}`);
     if (io) io.emit('job:completed', { jobId: job._id, title: job.title, type: job.type });
+
+    // award badges if any
+    try {
+      const { checkAndAwardBadges } = require('./utils/badges');
+      const newBadges = await checkAndAwardBadges(job.userId);
+      if (newBadges && newBadges.length > 0) {
+        if (io) io.emit('badges:awarded', { userId: job.userId, newBadges });
+      }
+    } catch (e) {
+      console.error('Badge awarding error in worker:', e.message);
+    }
   } catch (err) {
     await Job.findByIdAndUpdate(job._id, {
       state: job.attempts >= 3 ? 'failed' : 'waiting',

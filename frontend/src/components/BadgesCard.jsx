@@ -22,6 +22,13 @@ export default function BadgesCard() {
       } catch {}
     }
     fetch()
+    const onBadgesUpdated = (e) => {
+      try {
+        fetch()
+      } catch {}
+    }
+    window.addEventListener('badges:updated', onBadgesUpdated)
+    return () => window.removeEventListener('badges:updated', onBadgesUpdated)
   }, [])
 
   useEffect(() => {

@@ -45,7 +45,15 @@ const [aiSuggestion, setAiSuggestion] = useState(null)
     events: {
       'job:completed': (p) => { fetchJobs(); toast.success(`✅ Task completed: ${p?.title || 'Task'}`) },
       'job:failed': (p) => { fetchJobs(); toast.error(`❌ Task failed: ${p?.title || 'Task'}`) },
-      'job:updated': fetchJobs
+      'job:updated': fetchJobs,
+      'badges:awarded': (p) => {
+        // if badges awarded for current user, show toast(s) and notify badges card to refresh
+        const uid = user?.id || user?._id
+        if (!p || !p.userId || (uid && p.userId !== uid)) return
+        const newBadges = p.newBadges || []
+        newBadges.forEach(b => toast.success(`🏅 Badge earned: ${b.icon} ${b.name}!`))
+        try { window.dispatchEvent(new CustomEvent('badges:updated', { detail: newBadges })) } catch (e) {}
+      }
     }
   } : {})
 
