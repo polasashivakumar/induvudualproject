@@ -23,15 +23,17 @@ export default function CountdownTimer({ jobs }) {
     const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
     const secs = Math.floor((diff % (1000 * 60)) / 1000)
 
-    if (days > 0) return { text: `${days}d ${hours}h ${mins}m`, urgent: days < 1 }
-    if (hours > 0) return { text: `${hours}h ${mins}m ${secs}s`, urgent: hours < 3 }
+    if (days > 0) return { text: `${days}d ${hours}h`, urgent: days < 1 }
+    if (hours > 0) return { text: `${hours}h ${mins}m`, urgent: hours < 3 }
     return { text: `${mins}m ${secs}s`, urgent: true }
   }
 
   return (
     <div style={{
       background: 'rgba(17,24,39,0.6)', border: '1px solid rgba(255,255,255,0.08)',
-      borderRadius: '20px', padding: '24px', backdropFilter: 'blur(10px)'
+      borderRadius: '20px', padding: '24px', backdropFilter: 'blur(10px)',
+      minWidth: 0,        // ✅ FIX
+      overflow: 'hidden'  // ✅ FIX
     }}>
       <div style={{ marginBottom: '16px' }}>
         <h3 style={{ color: '#fff', fontWeight: '700', fontSize: '16px' }}>
@@ -73,11 +75,15 @@ export default function CountdownTimer({ jobs }) {
               <div key={job._id} style={{
                 background: time.urgent ? 'rgba(239,68,68,0.1)' : 'rgba(255,255,255,0.04)',
                 border: `1px solid ${time.urgent ? 'rgba(239,68,68,0.3)' : 'rgba(255,255,255,0.08)'}`,
-                borderRadius: '12px', padding: '14px 16px',
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+                borderRadius: '12px', padding: '12px 14px',
+                display: 'flex', justifyContent: 'space-between',
+                alignItems: 'center', gap: '8px'  // ✅ FIX: gap instead of relying on width
               }}>
-                <div>
-                  <div style={{ color: '#e5e7eb', fontWeight: '600', fontSize: '13px' }}>
+                <div style={{ minWidth: 0, flex: 1 }}>  {/* ✅ FIX */}
+                  <div style={{
+                    color: '#e5e7eb', fontWeight: '600', fontSize: '13px',
+                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'
+                  }}>
                     {job.title}
                   </div>
                   <div style={{ color: '#4b5563', fontSize: '11px', marginTop: '2px' }}>
@@ -86,10 +92,12 @@ export default function CountdownTimer({ jobs }) {
                 </div>
                 <div style={{
                   color: time.urgent ? '#ef4444' : '#10b981',
-                  fontWeight: '700', fontSize: '13px',
+                  fontWeight: '700', fontSize: '12px',
                   background: time.urgent ? 'rgba(239,68,68,0.1)' : 'rgba(16,185,129,0.1)',
-                  padding: '6px 12px', borderRadius: '8px',
-                  fontFamily: 'monospace', minWidth: '100px', textAlign: 'center'
+                  padding: '6px 10px', borderRadius: '8px',
+                  fontFamily: 'monospace',
+                  whiteSpace: 'nowrap', // ✅ FIX: removed minWidth: 100px
+                  flexShrink: 0        // ✅ FIX: don't shrink timer
                 }}>
                   {time.text}
                 </div>
