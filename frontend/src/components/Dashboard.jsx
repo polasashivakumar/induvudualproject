@@ -81,16 +81,39 @@ export default function Dashboard() {
       if (activeTab === 'announcements') return <Announcements isAdmin={true} />
     } else {
       if (activeTab === 'dashboard') return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%', overflow: 'hidden' }}>
           <StatsCards onStatsLoad={setStats} />
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
-            <ProgressCard stats={stats} />
-            <CountdownTimer jobs={jobs} />
+
+          {/* ✅ FIX: stack on mobile, side by side on desktop */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+            gap: '16px',
+            width: '100%',
+            overflow: 'hidden'
+          }}>
+            <div style={{ minWidth: 0, overflow: 'hidden' }}>
+              <ProgressCard stats={stats} />
+            </div>
+            <div style={{ minWidth: 0, overflow: 'hidden' }}>
+              <CountdownTimer jobs={jobs} />
+            </div>
           </div>
+
           {!isMobile && (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-              <AnalyticsChart />
-              <BadgesCard />
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '16px',
+              width: '100%',
+              overflow: 'hidden'
+            }}>
+              <div style={{ minWidth: 0, overflow: 'hidden' }}>
+                <AnalyticsChart />
+              </div>
+              <div style={{ minWidth: 0, overflow: 'hidden' }}>
+                <BadgesCard />
+              </div>
             </div>
           )}
           {isMobile && <BadgesCard />}
@@ -135,7 +158,9 @@ export default function Dashboard() {
     <div style={{
       minHeight: '100vh',
       background: `linear-gradient(135deg, ${colors.bg} 0%, ${colors.bg2} 100%)`,
-      paddingBottom: isMobile ? '70px' : '0'
+      paddingBottom: isMobile ? '70px' : '0',
+      overflowX: 'hidden', // ✅ FIX
+      width: '100%'        // ✅ FIX
     }}>
       <Navbar onNotifClick={() => setShowNotif(true)} />
 
@@ -166,7 +191,10 @@ export default function Dashboard() {
       {/* Content */}
       <div style={{
         padding: isMobile ? '16px' : '24px 32px',
-        maxWidth: '1400px', margin: '0 auto'
+        maxWidth: '1400px',
+        margin: '0 auto',
+        width: '100%',       // ✅ FIX
+        overflowX: 'hidden'  // ✅ FIX
       }}>
         {/* Welcome banner */}
         <div style={{
