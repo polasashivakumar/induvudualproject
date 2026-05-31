@@ -20,9 +20,15 @@ export default function ProgressCard({ stats }) {
     <div style={{
       background: 'linear-gradient(135deg, rgba(124,58,237,0.15), rgba(79,70,229,0.1))',
       border: '1px solid rgba(124,58,237,0.2)',
-      borderRadius: '20px', padding: '24px'
+      borderRadius: '20px', padding: '24px',
+      minWidth: 0,        // ✅ FIX
+      overflow: 'hidden'  // ✅ FIX
     }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
+      <div style={{
+        display: 'flex', justifyContent: 'space-between',
+        alignItems: 'flex-start', marginBottom: '20px',
+        flexWrap: 'wrap', gap: '8px'
+      }}>
         <div>
           <h3 style={{ color: '#fff', fontWeight: '700', fontSize: '16px' }}>
             🏆 Your Progress
@@ -36,7 +42,8 @@ export default function ProgressCard({ stats }) {
           background: `${badge.color}22`,
           color: badge.color,
           fontSize: '12px', fontWeight: '700',
-          border: `1px solid ${badge.color}44`
+          border: `1px solid ${badge.color}44`,
+          whiteSpace: 'nowrap'
         }}>
           {badge.label}
         </span>
