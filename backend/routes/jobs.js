@@ -528,26 +528,106 @@ router.get('/leaderboard', protect, async (req, res) => {
       const jobs = await Job.find({ userId: s._id });
       const completed = jobs.filter(j => j.state === 'completed').length;
       const total = jobs.length;
+      const avgRating = jobs.filter(j => j.rating).length
+        ? Math.round(jobs.filter(j => j.rating).reduce((a, j) => a + j.rating, 0) / jobs.filter(j => j.rating).length * 10) / 10
+        : 0;
       return {
         userId: s._id,
         name: s.name,
         department: s.department,
         rollNumber: s.rollNumber,
-        completed,
-        total,
+        completed, total,
         completionRate: total ? Math.round((completed / total) * 100) : 0,
+        badges: s.badges?.length || 0,
+        avgRating
+      };
+    }));
+    leaderboard.sort((a, b) =>
+      b.completed !== a.completed ? b.completed - a.completed : b.completionRate - a.completionRate
+    );
+    res.json(leaderboard.slice(0, 20));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Student of the month
+router.get('/student-of-month', protect, async (req, res) => {
+  try {
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const students = await User.find({ role: 'student' }).select('-password');
+    const monthStats = await Promise.all(students.map(async (s) => {
+      const jobs = await Job.find({
+        userId: s._id,
+        state: 'completed',
+        completedAt: { $gte: startOfMonth }
+      });
+      return {
+        userId: s._id,
+        name: s.name,
+        department: s.department,
+        rollNumber: s.rollNumber,
+        completedThisMonth: jobs.length,
         badges: s.badges?.length || 0
       };
     }));
 
-    // Sort by completed tasks then completion rate
-    leaderboard.sort((a, b) =>
-      b.completed !== a.completed
-        ? b.completed - a.completed
-        : b.completionRate - a.completionRate
-    );
+    monthStats.sort((a, b) => b.completedThisMonth - a.completedThisMonth);
+    res.json(monthStats.slice(0, 3));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
-    res.json(leaderboard.slice(0, 20));
+// Student feedback on task
+router.put('/:id/feedback', protect, async (req, res) => {
+  try {
+    const { feedback, feedbackRating } = req.body;
+    const job = await Job.findOne({ _id: req.params.id, userId: req.user._id });
+    if (!job) return res.status(404).json({ error: 'Task not found' });
+    if (job.state !== 'completed') return res.status(400).json({ error: 'Can only give feedback on completed tasks' });
+
+    job.studentFeedback = feedback || '';
+    job.feedbackRating = feedbackRating || null;
+    await job.save();
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Department analytics for students
+router.get('/dept-analytics', protect, async (req, res) => {
+  try {
+    const dept = req.user.department;
+    if (!dept) return res.json({ students: 0, avgCompletion: 0, topStudents: [] });
+
+    const students = await User.find({ role: 'student', department: dept }).select('-password');
+    const statsArr = await Promise.all(students.map(async (s) => {
+      const jobs = await Job.find({ userId: s._id });
+      const completed = jobs.filter(j => j.state === 'completed').length;
+      return {
+        name: s.name,
+        completed,
+        total: jobs.length,
+        rate: jobs.length ? Math.round((completed / jobs.length) * 100) : 0
+      };
+    }));
+
+    const avgCompletion = statsArr.length
+      ? Math.round(statsArr.reduce((a, s) => a + s.rate, 0) / statsArr.length)
+      : 0;
+
+    statsArr.sort((a, b) => b.completed - a.completed);
+
+    res.json({
+      dept,
+      students: students.length,
+      avgCompletion,
+      topStudents: statsArr.slice(0, 5)
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

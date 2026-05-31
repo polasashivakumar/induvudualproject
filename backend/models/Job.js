@@ -9,8 +9,11 @@ const commentSchema = new mongoose.Schema({
 });
 
 const attachmentSchema = new mongoose.Schema({
-  name: String, filename: String,
-  url: String, size: Number,
+  name: String,
+  filename: String,
+  url: String,
+  size: Number,
+  type: { type: String, default: 'file' }, // file or video
   uploadedAt: { type: Date, default: Date.now }
 });
 
@@ -33,13 +36,17 @@ const jobSchema = new mongoose.Schema({
   },
   title: { type: String, required: true },
   description: { type: String, default: '' },
-  priority: { type: Number, default: 2 },
+  urgency: {
+    type: String,
+    enum: ['urgent', 'normal', 'low'],
+    default: 'normal'
+  },
   state: {
     type: String,
-    enum: ['waiting', 'active', 'completed', 'failed'],
-    default: 'waiting'
+    enum: ['pending', 'active', 'completed', 'failed'],
+    default: 'pending'
   },
-  // Approval workflow
+  // Approval
   approvalStatus: {
     type: String,
     enum: ['pending', 'approved', 'rejected'],
@@ -48,11 +55,16 @@ const jobSchema = new mongoose.Schema({
   approvedBy: { type: String, default: '' },
   approvedAt: { type: Date, default: null },
   rejectionReason: { type: String, default: '' },
+  // Feedback from student
+  studentFeedback: { type: String, default: '' },
+  feedbackRating: { type: Number, default: null, min: 1, max: 5 },
+  // Goals
+  goalId: { type: mongoose.Schema.Types.ObjectId, ref: 'Goal', default: null },
   // Time tracker
   timeStarted: { type: Date, default: null },
   timeCompleted: { type: Date, default: null },
   timeSpentMinutes: { type: Number, default: 0 },
-  // Other fields
+  // Other
   attempts: { type: Number, default: 0 },
   adminNote: { type: String, default: '' },
   comments: [commentSchema],

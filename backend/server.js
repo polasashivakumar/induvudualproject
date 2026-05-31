@@ -1,40 +1,44 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
+
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
+
 const connectDB = require('./db');
 const { startWorker } = require('./worker');
-require('dotenv').config();
 
 const app = express();
 
-const allowedOrigins = new Set(
-  [
-    'http://localhost:5173',
-    'https://induvudualproject.vercel.app',
-    process.env.FRONTEND_URL,
-    process.env.CORS_ORIGIN,
-  ]
-    .filter(Boolean)
-    .flatMap((value) => value.split(',').map((origin) => origin.trim()))
-    .filter(Boolean)
-)
+// Auto-create uploads dir (important for Render)
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
-app.use(
-  cors({
-    origin(origin, callback) {
-      if (!origin || allowedOrigins.has(origin)) {
-        return callback(null, true)
-      }
+// ✅ CORS — specific origins, works with credentials
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://induvudualproject.vercel.app',
+  process.env.FRONTEND_URL,
+  process.env.CORS_ORIGIN,
+].filter(Boolean)
+  .flatMap(v => v.split(',').map(o => o.trim()))
+  .filter(Boolean)
 
-      return callback(new Error(`CORS blocked for origin: ${origin}`))
-    },
-    credentials: true,
-  })
-)
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true)
+    } else {
+      callback(new Error(`CORS blocked: ${origin}`))
+    }
+  },
+  credentials: true
+}))
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Serve uploaded files statically
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.get('/health', (req, res) => res.json({ status: 'OK' }));
@@ -42,13 +46,26 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/jobs', require('./routes/jobs'));
 app.use('/api/upload', require('./routes/upload'));
 app.use('/api/ai', require('./routes/ai'));
+app.use('/api/goals', require('./routes/goals'));
 app.use('/api/announcements', require('./routes/announcements'));
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error('Error:', err.message);
+  res.status(500).json({ error: err.message });
+});
+
 const PORT = process.env.PORT || 5000;
 
 const start = async () => {
-  await connectDB();
-  startWorker();
-  app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+  try {
+    await connectDB();
+    startWorker();
+    app.listen(PORT, () => console.log(`🚀 Server on port ${PORT}`));
+  } catch (err) {
+    console.error('Start error:', err.message);
+    process.exit(1);
+  }
 };
 
 start();

@@ -1,40 +1,47 @@
 const express = require('express');
 const router = express.Router();
-const mongoose = require('mongoose');
+const Announcement = require('../models/Announcement');
 const { protect, adminOnly } = require('../middleware/auth');
 
-const announcementSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  message: { type: String, required: true },
-  type: { type: String, enum: ['info', 'warning', 'success', 'urgent'], default: 'info' },
-  createdBy: { type: String },
-}, { timestamps: true });
-
-const Announcement = mongoose.model('Announcement', announcementSchema);
-
-// Get all
 router.get('/', protect, async (req, res) => {
   try {
-    const announcements = await Announcement.find().sort({ createdAt: -1 }).limit(20);
+    const announcements = await Announcement.find()
+      .sort({ pinned: -1, createdAt: -1 })
+      .limit(20);
     res.json(announcements);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// Post (admin only)
 router.post('/', protect, adminOnly, async (req, res) => {
   try {
-    const { title, message, type } = req.body;
-    if (!title || !message) return res.status(400).json({ error: 'Title and message required' });
-    const a = await Announcement.create({ title, message, type, createdBy: req.user.name });
+    const { title, message, type, pinned } = req.body;
+    if (!title || !message) return res.status(400).json({ error: 'Required fields missing' });
+    const a = await Announcement.create({
+      title, message,
+      type: type || 'info',
+      pinned: pinned || false,
+      createdBy: req.user.name
+    });
     res.json({ success: true, announcement: a });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// Delete (admin only)
+router.put('/:id/pin', protect, adminOnly, async (req, res) => {
+  try {
+    const a = await Announcement.findById(req.params.id);
+    if (!a) return res.status(404).json({ error: 'Not found' });
+    a.pinned = !a.pinned;
+    await a.save();
+    res.json({ success: true, pinned: a.pinned });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.delete('/:id', protect, adminOnly, async (req, res) => {
   try {
     await Announcement.findByIdAndDelete(req.params.id);
