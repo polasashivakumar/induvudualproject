@@ -73,6 +73,14 @@ export default function Dashboard() {
 
   const tabs = user?.role === 'admin' ? adminTabs : studentTabs
 
+  // ✅ CSS-only responsive grid — no JS breakpoint needed
+  const twoColGrid = {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gap: '16px',
+    width: '100%'
+  }
+
   const renderContent = () => {
     if (user?.role === 'admin') {
       if (activeTab === 'dashboard') return <AdminDashboardHome />
@@ -81,33 +89,20 @@ export default function Dashboard() {
       if (activeTab === 'announcements') return <Announcements isAdmin={true} />
     } else {
       if (activeTab === 'dashboard') return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%', overflow: 'hidden' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
           <StatsCards onStatsLoad={setStats} />
 
-          {/* ✅ FIX: Progress + Countdown — stack on mobile */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
-            gap: '16px',
-            width: '100%'
-          }}>
+          {/* ✅ auto-fit grid: 1 col on mobile, 2 on desktop */}
+          <div style={twoColGrid}>
             <div style={{ minWidth: 0 }}><ProgressCard stats={stats} /></div>
             <div style={{ minWidth: 0 }}><CountdownTimer jobs={jobs} /></div>
           </div>
 
-          {/* ✅ FIX: Analytics + Badges — only on desktop */}
-          {!isMobile && (
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '16px',
-              width: '100%'
-            }}>
-              <div style={{ minWidth: 0 }}><AnalyticsChart /></div>
-              <div style={{ minWidth: 0 }}><BadgesCard /></div>
-            </div>
-          )}
-          {isMobile && <BadgesCard />}
+          <div style={twoColGrid}>
+            <div style={{ minWidth: 0 }}><AnalyticsChart /></div>
+            <div style={{ minWidth: 0 }}><BadgesCard /></div>
+          </div>
+
           <ActivityHeatmap />
           <JobTable onJobsUpdate={setJobs} />
         </div>
@@ -150,8 +145,8 @@ export default function Dashboard() {
       minHeight: '100vh',
       background: `linear-gradient(135deg, ${colors.bg} 0%, ${colors.bg2} 100%)`,
       paddingBottom: isMobile ? '70px' : '0',
-      overflowX: 'hidden', // ✅ FIX
-      width: '100%'        // ✅ FIX
+      overflowX: 'hidden',
+      width: '100%'
     }}>
       <Navbar onNotifClick={() => setShowNotif(true)} />
 
@@ -184,8 +179,8 @@ export default function Dashboard() {
         padding: isMobile ? '16px' : '24px 32px',
         maxWidth: '1400px',
         margin: '0 auto',
-        width: '100%',      // ✅ FIX
-        overflowX: 'hidden' // ✅ FIX
+        width: '100%',
+        overflowX: 'hidden'
       }}>
         {/* Welcome banner */}
         <div style={{
