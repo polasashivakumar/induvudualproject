@@ -45,8 +45,10 @@ const checkAndAwardBadges = async (userId) => {
 
 // ===== STATIC ROUTES FIRST (before /:id) =====
 
+const { submitValidators, statusValidators, commentValidators, runValidation } = require('../middleware/validation');
+
 // Submit task
-router.post('/submit', protect, async (req, res) => {
+router.post('/submit', protect, submitValidators, runValidation, async (req, res) => {
   try {
     const { type, title, description, priority, dueDate, templateUsed, attachments } = req.body;
     if (!type || !title) return res.status(400).json({ error: 'Type and title required' });
@@ -76,7 +78,23 @@ router.post('/submit', protect, async (req, res) => {
 // Get MY tasks (student)
 router.get('/my', protect, async (req, res) => {
   try {
-    const jobs = await Job.find({ userId: req.user._id }).sort({ createdAt: -1 });
+    const { page, limit, search, state } = req.query;
+    const filter = { userId: req.user._id };
+    if (state) filter.state = state;
+    if (search) {
+      filter.$or = [
+        { title: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } },
+        { type: { $regex: search, $options: 'i' } },
+      ];
+    }
+
+    const query = Job.find(filter).sort({ createdAt: -1 });
+    const parsedLimit = parseInt(limit, 10);
+    const parsedPage = Math.max(parseInt(page, 10) || 1, 1);
+    if (parsedLimit > 0) query.skip((parsedPage - 1) * parsedLimit).limit(parsedLimit);
+
+    const jobs = await query;
     res.json(jobs);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -86,11 +104,27 @@ router.get('/my', protect, async (req, res) => {
 // Get ALL tasks (admin)
 router.get('/all', protect, adminOnly, async (req, res) => {
   try {
-    const { archived } = req.query;
+    const { archived, page, limit, search, state } = req.query;
     const filter = archived === 'true'
       ? { adminArchived: true }
       : { adminArchived: { $ne: true } };
-    const jobs = await Job.find(filter).sort({ createdAt: -1 });
+
+    if (state) filter.state = state;
+    if (search) {
+      filter.$or = [
+        { title: { $regex: search, $options: 'i' } },
+        { userName: { $regex: search, $options: 'i' } },
+        { department: { $regex: search, $options: 'i' } },
+        { rollNumber: { $regex: search, $options: 'i' } },
+      ];
+    }
+
+    const query = Job.find(filter).sort({ createdAt: -1 });
+    const parsedLimit = parseInt(limit, 10);
+    const parsedPage = Math.max(parseInt(page, 10) || 1, 1);
+    if (parsedLimit > 0) query.skip((parsedPage - 1) * parsedLimit).limit(parsedLimit);
+
+    const jobs = await query;
     res.json(jobs);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -261,7 +295,7 @@ router.get('/student/:userId', protect, adminOnly, async (req, res) => {
 // ===== DYNAMIC /:id ROUTES LAST =====
 
 // Add comment
-router.post('/:id/comment', protect, async (req, res) => {
+router.post('/:id/comment', protect, commentValidators, runValidation, async (req, res) => {
   try {
     const { text } = req.body;
     if (!text) return res.status(400).json({ error: 'Comment required' });
@@ -273,6 +307,7 @@ router.post('/:id/comment', protect, async (req, res) => {
     job.comments.push({ userId: req.user._id, userName: req.user.name, role: req.user.role, text });
     job.auditLog.push({ action: 'commented', by: req.user.name, role: req.user.role, note: text.substring(0, 50) });
     await job.save();
+    try { app.locals.io?.emit('job:updated', { jobId: job._id, state, title: job.title }); } catch (e) {}
     res.json({ success: true, comments: job.comments });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -310,35 +345,8 @@ router.post('/:id/resubmit', protect, async (req, res) => {
 });
 
 // Admin update status — FIXED
-router.put('/:id/status', protect, adminOnly, async (req, res) => {
-  try {
-    const { state, adminNote } = req.body;
-    console.log(`🔄 Updating job ${req.params.id} → ${state} by ${req.user.name}`);
-
-    const job = await Job.findById(req.params.id);
-    if (!job) return res.status(404).json({ error: 'Task not found' });
-
-    job.state = state;
-    if (adminNote !== undefined) job.adminNote = adminNote;
-    job.completedAt = state === 'completed' ? new Date() : null;
-    job.isRead = false;
-    job.auditLog.push({
-      action: `status_changed_to_${state}`,
-      by: req.user.name,
-      role: 'admin',
-      note: adminNote || `Status changed to ${state}`
-    });
-
-    await job.save();
-    console.log(`✅ Job ${req.params.id} updated to ${state}`);
-
-    if (state === 'completed') await checkAndAwardBadges(job.userId);
-
-    res.json({ success: true, job });
-  } catch (err) {
-    console.error('Update status error:', err.message);
-    res.status(500).json({ error: err.message });
-  }
+router.put('/:id/status', protect, adminOnly, async (req, res, next) => {
+  return next();
 });
 
 // Student mark complete
@@ -351,6 +359,7 @@ router.put('/:id/complete', protect, async (req, res) => {
     job.completedAt = new Date();
     job.auditLog.push({ action: 'completed', by: req.user.name, role: 'student', note: 'Marked as completed by student' });
     await job.save();
+    try { app.locals.io?.emit('job:updated', { jobId: job._id, state: job.state, title: job.title }); } catch (e) {}
     const newBadges = await checkAndAwardBadges(req.user._id);
     res.json({ success: true, newBadges });
   } catch (err) {
@@ -378,6 +387,38 @@ router.put('/:id/admin-rate', protect, adminOnly, async (req, res) => {
   }
 });
 
+// Student rate task
+router.put('/:id/rate', protect, async (req, res) => {
+  try {
+    const { rating, ratingNote } = req.body;
+    if (!rating || rating < 1 || rating > 5) {
+      return res.status(400).json({ error: 'Rating must be 1-5' });
+    }
+
+    const job = await Job.findOneAndUpdate(
+      { _id: req.params.id, userId: req.user._id, state: 'completed' },
+      {
+        rating,
+        ratingNote: ratingNote || '',
+        $push: {
+          auditLog: {
+            action: 'rated',
+            by: req.user.name,
+            role: 'student',
+            note: `Rated ${rating}/5`
+          }
+        }
+      },
+      { new: true }
+    );
+
+    if (!job) return res.status(404).json({ error: 'Task not found or not completed' });
+    res.json({ success: true, job });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Archive job (admin soft delete)
 router.put('/:id/archive', protect, adminOnly, async (req, res) => {
   try {
@@ -386,6 +427,16 @@ router.put('/:id/archive', protect, adminOnly, async (req, res) => {
       adminArchivedAt: new Date()
     });
     res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Clear completed tasks (admin)
+router.delete('/completed', protect, adminOnly, async (req, res) => {
+  try {
+    const result = await Job.deleteMany({ state: 'completed' });
+    res.json({ success: true, deletedCount: result.deletedCount || 0 });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -419,6 +470,7 @@ router.put('/:id/approve', protect, adminOnly, async (req, res) => {
       role: 'admin', note: reason || 'Task approved'
     });
     await job.save();
+    try { app.locals.io?.emit('job:updated', { jobId: job._id, state: job.state, title: job.title }); } catch (e) {}
 
     // Send email
     const { sendEmail, approvalEmail } = require('../utils/emailService');

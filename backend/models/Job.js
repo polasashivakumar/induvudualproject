@@ -86,4 +86,8 @@ const jobSchema = new mongoose.Schema({
   emailNotified: { type: Boolean, default: false },
 }, { timestamps: true });
 
+jobSchema.index({ userId: 1, state: 1, createdAt: -1 });
+jobSchema.index({ userId: 1, completedAt: -1 });
+jobSchema.index({ department: 1, state: 1 });
+
 module.exports = mongoose.model('Job', jobSchema);

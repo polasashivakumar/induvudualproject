@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import useSocket from '../hooks/useSocket'
 import API from '../api/axios'
 import { useAuth } from '../context/AuthContext'
 import toast from 'react-hot-toast'
@@ -197,13 +198,15 @@ export default function JobTable({ onJobsUpdate }) {
     }
   }
 
-  useEffect(() => {
-    fetchJobs()
+  useEffect(() => { fetchJobs() }, [])
 
-    const interval = setInterval(fetchJobs, 3000)
-
-    return () => clearInterval(interval)
-  }, [])
+  useSocket({
+    events: {
+      'job:completed': fetchJobs,
+      'job:failed': fetchJobs,
+      'job:updated': fetchJobs
+    }
+  })
 
   const filtered = jobs
     .filter((j) => filter === 'all' || j.state === filter)

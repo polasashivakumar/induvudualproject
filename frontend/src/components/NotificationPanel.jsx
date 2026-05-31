@@ -1,21 +1,23 @@
 import { useEffect, useState } from 'react'
 import API from '../api/axios'
+import useSocket from '../hooks/useSocket'
 
 export default function NotificationPanel({ onClose }) {
   const [notifs, setNotifs] = useState([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const res = await API.get('/jobs/notifications')
-        setNotifs(res.data)
-        await API.put('/jobs/notifications/read')
-      } catch {}
-      setLoading(false)
-    }
-    fetch()
-  }, [])
+  const fetchNotifs = async () => {
+    try {
+      const res = await API.get('/jobs/notifications')
+      setNotifs(res.data)
+      await API.put('/jobs/notifications/read')
+    } catch {}
+    setLoading(false)
+  }
+
+  useEffect(() => { fetchNotifs() }, [])
+
+  useSocket({ events: { 'job:completed': fetchNotifs, 'job:failed': fetchNotifs, 'job:updated': fetchNotifs } })
 
   const stateColors = {
     completed: '#10b981',

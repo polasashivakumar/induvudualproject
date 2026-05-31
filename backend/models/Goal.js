@@ -10,4 +10,6 @@ const goalSchema = new mongoose.Schema({
   completedAt: { type: Date, default: null },
 }, { timestamps: true });
 
+goalSchema.index({ userId: 1, completed: 1, createdAt: -1 });
+
 module.exports = mongoose.model('Goal', goalSchema);

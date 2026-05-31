@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import API from '../api/axios'
+import useSocket from '../hooks/useSocket'
 import { FILE_BASE_URL } from '../api/config'
 import toast from 'react-hot-toast'
 
@@ -98,11 +99,15 @@ export default function AdminDashboardHome() {
     toast.success('📤 Exported!')
   }
 
-  useEffect(() => {
-    fetchAll()
-    const interval = setInterval(fetchAll, 5000)
-    return () => clearInterval(interval)
-  }, [])
+  useEffect(() => { fetchAll() }, [])
+
+  useSocket({
+    events: {
+      'job:completed': fetchAll,
+      'job:failed': fetchAll,
+      'job:updated': fetchAll
+    }
+  })
 
   const filtered = jobs
     .filter(j => filter === 'all' || j.state === filter)

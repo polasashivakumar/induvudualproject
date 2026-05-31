@@ -9,6 +9,10 @@ if (process.env.NODE_ENV !== 'production') {
 
 const connectDB = require('./db');
 const { startWorker } = require('./worker');
+const { createServer } = require('http');
+const { Server } = require('socket.io');
+const cron = require('node-cron');
+const { sendWeeklyReports } = require('./utils/scheduler');
 
 const app = express();
 
@@ -60,8 +64,35 @@ const PORT = process.env.PORT || 5000;
 const start = async () => {
   try {
     await connectDB();
-    startWorker();
-    app.listen(PORT, () => console.log(`🚀 Server on port ${PORT}`));
+
+    const httpServer = createServer(app);
+    const io = new Server(httpServer, {
+      cors: { origin: allowedOrigins }
+    });
+
+    // attach auth middleware for sockets
+    const socketAuth = require('./middleware/socketAuth');
+    io.use(socketAuth);
+
+    // make io available to routes via app.locals
+    app.locals.io = io;
+
+    // connection log with authenticated user info
+    io.on('connection', (socket) => {
+      console.log('🔌 Socket connected:', socket.id, 'user:', socket.data.user?.email);
+      socket.on('disconnect', () => console.log('🔌 Socket disconnected:', socket.id, 'user:', socket.data.user?.email));
+    });
+
+    // start background pieces
+    startWorker(io);
+
+    // schedule weekly report (runs every Monday at 08:00)
+    cron.schedule('0 8 * * 1', () => {
+      console.log('🕒 Running weekly report job');
+      sendWeeklyReports();
+    });
+
+    httpServer.listen(PORT, () => console.log(`🚀 Server + sockets on port ${PORT}`));
   } catch (err) {
     console.error('Start error:', err.message);
     process.exit(1);

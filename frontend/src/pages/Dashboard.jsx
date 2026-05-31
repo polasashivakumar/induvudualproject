@@ -20,6 +20,8 @@ import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
 import { useTranslation } from 'react-i18next'
 import API from '../api/axios'
+import useSocket from '../hooks/useSocket'
+import toast from 'react-hot-toast'
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('dashboard')
@@ -30,19 +32,22 @@ export default function Dashboard() {
   const { colors } = useTheme()
   const { t } = useTranslation()
 const [aiSuggestion, setAiSuggestion] = useState(null)
-  useEffect(() => {
-    if (user?.role !== 'admin') {
-      const fetch = async () => {
-        try {
-          const res = await API.get('/jobs/my')
-          setJobs(res.data)
-        } catch {}
-      }
-      fetch()
-      const interval = setInterval(fetch, 5000)
-      return () => clearInterval(interval)
+  const fetchJobs = async () => {
+    try {
+      const res = await API.get('/jobs/my')
+      setJobs(res.data)
+    } catch {}
+  }
+
+  useEffect(() => { if (user?.role !== 'admin') fetchJobs() }, [user])
+
+  useSocket(user?.role !== 'admin' ? {
+    events: {
+      'job:completed': (p) => { fetchJobs(); toast.success(`✅ Task completed: ${p?.title || 'Task'}`) },
+      'job:failed': (p) => { fetchJobs(); toast.error(`❌ Task failed: ${p?.title || 'Task'}`) },
+      'job:updated': fetchJobs
     }
-  }, [user])
+  } : {})
 
   const adminTabs = [
     { id: 'dashboard', label: '📊 Overview' },

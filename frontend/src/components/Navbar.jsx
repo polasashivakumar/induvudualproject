@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useTheme } from '../context/ThemeContext'
 import { useTranslation } from 'react-i18next'
 import API from '../api/axios'
+import useSocket from '../hooks/useSocket'
 import toast from 'react-hot-toast'
 
 export default function Navbar({ onNotifClick }) {
@@ -21,19 +22,22 @@ export default function Navbar({ onNotifClick }) {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  useEffect(() => {
-    if (user?.role !== 'admin') {
-      const fetch = async () => {
-        try {
-          const res = await API.get('/jobs/notifications')
-          setNotifCount(res.data.length)
-        } catch {}
-      }
-      fetch()
-      const interval = setInterval(fetch, 5000)
-      return () => clearInterval(interval)
+  const fetchNotifs = async () => {
+    try {
+      const res = await API.get('/jobs/notifications')
+      setNotifCount(res.data.length)
+    } catch {}
+  }
+
+  useEffect(() => { if (user?.role !== 'admin') fetchNotifs() }, [user])
+
+  useSocket(user?.role !== 'admin' ? {
+    events: {
+      'job:completed': fetchNotifs,
+      'job:failed': fetchNotifs,
+      'job:updated': fetchNotifs
     }
-  }, [user])
+  } : {})
 
   const handleLogout = () => {
     logout()
