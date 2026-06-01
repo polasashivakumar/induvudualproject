@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import API from '../api/axios'
 import useSocket from '../hooks/useSocket'
 import { FILE_BASE_URL } from '../api/config'
+import { useTheme } from '../context/ThemeContext'
 import toast from 'react-hot-toast'
 
 const stateConfig = {
@@ -25,25 +26,6 @@ const priorityConfig = {
   3: { label: '🟢 Low',    color: '#10b981' },
 }
 
-const palette = {
-  pageBg: 'linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%)',
-  shellBg: 'rgba(255,255,255,0.84)',
-  panelBg: 'rgba(255,255,255,0.92)',
-  panelSoft: 'rgba(248,250,252,0.95)',
-  border: 'rgba(15,23,42,0.08)',
-  borderStrong: 'rgba(99,102,241,0.16)',
-  text: '#0f172a',
-  textMuted: '#475569',
-  textSoft: '#64748b',
-  accent: '#6d28d9',
-  accent2: '#2563eb',
-  accentBorder: 'rgba(109,40,217,0.18)',
-  successBg: 'rgba(16,185,129,0.12)',
-  warnBg: 'rgba(245,158,11,0.12)',
-  dangerBg: 'rgba(239,68,68,0.12)',
-  infoBg: 'rgba(59,130,246,0.12)'
-}
-
 export default function AdminDashboardHome() {
   const [jobs, setJobs] = useState([])
   const [stats, setStats] = useState({})
@@ -55,6 +37,55 @@ export default function AdminDashboardHome() {
   const [updating, setUpdating] = useState(false)
   const [viewFile, setViewFile] = useState(null)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+  const { theme } = useTheme()
+
+  const palette = theme === 'dark'
+    ? {
+        pageBg: 'linear-gradient(180deg, #020617 0%, #0f172a 100%)',
+        shellBg: 'rgba(15,23,42,0.88)',
+        panelBg: 'rgba(15,23,42,0.94)',
+        panelSoft: 'rgba(30,41,59,0.88)',
+        inputBg: 'rgba(15,23,42,0.88)',
+        border: 'rgba(148,163,184,0.14)',
+        borderStrong: 'rgba(167,139,250,0.2)',
+        text: '#f8fafc',
+        textMuted: '#cbd5e1',
+        textSoft: '#94a3b8',
+        accent: '#a78bfa',
+        accent2: '#60a5fa',
+        accentBorder: 'rgba(167,139,250,0.2)',
+        successBg: 'rgba(16,185,129,0.14)',
+        warnBg: 'rgba(245,158,11,0.14)',
+        dangerBg: 'rgba(239,68,68,0.14)',
+        infoBg: 'rgba(59,130,246,0.14)',
+        rowBg: 'rgba(15,23,42,0.82)',
+        rowAlt: 'rgba(30,41,59,0.88)',
+        tableHead: 'rgba(15,23,42,0.96)',
+        inputBorder: 'rgba(148,163,184,0.18)'
+      }
+    : {
+        pageBg: 'linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%)',
+        shellBg: 'rgba(255,255,255,0.84)',
+        panelBg: 'rgba(255,255,255,0.92)',
+        panelSoft: 'rgba(248,250,252,0.95)',
+        inputBg: '#ffffff',
+        border: 'rgba(15,23,42,0.08)',
+        borderStrong: 'rgba(99,102,241,0.16)',
+        text: '#0f172a',
+        textMuted: '#475569',
+        textSoft: '#64748b',
+        accent: '#6d28d9',
+        accent2: '#2563eb',
+        accentBorder: 'rgba(109,40,217,0.18)',
+        successBg: 'rgba(16,185,129,0.12)',
+        warnBg: 'rgba(245,158,11,0.12)',
+        dangerBg: 'rgba(239,68,68,0.12)',
+        infoBg: 'rgba(59,130,246,0.12)',
+        rowBg: '#ffffff',
+        rowAlt: 'rgba(248,250,252,0.8)',
+        tableHead: 'rgba(15,23,42,0.03)',
+        inputBorder: 'rgba(99,102,241,0.16)'
+      }
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768)
@@ -251,7 +282,7 @@ export default function AdminDashboardHome() {
                 placeholder="e.g. Good work! Minor corrections needed on page 3..."
                 rows={3}
                 style={{
-                  width: '100%', background: '#ffffff',
+                  width: '100%', background: palette.inputBg,
                   border: `1px solid ${palette.borderStrong}`, borderRadius: '10px',
                   padding: '12px', color: palette.text, fontSize: '14px', outline: 'none',
                   fontFamily: 'Inter, sans-serif', resize: 'vertical', boxSizing: 'border-box'
@@ -282,7 +313,7 @@ export default function AdminDashboardHome() {
               ))}
             </div>
             <button onClick={() => { setSelectedJob(null); setAdminNote('') }} style={{
-              width: '100%', padding: '11px', background: 'rgba(255,255,255,0.05)',
+              width: '100%', padding: '11px', background: palette.inputBg,
               border: `1px solid ${palette.border}`, borderRadius: '10px',
               color: palette.textMuted, cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: '600'
             }}>Cancel</button>
@@ -344,7 +375,10 @@ export default function AdminDashboardHome() {
           { label: 'Failed', value: stats.failed, icon: '❌', color: '#ef4444', bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.2)' },
         ].map(c => (
           <div key={c.label} style={{
-            background: `linear-gradient(180deg, #ffffff 0%, ${c.bg} 100%)`, border: `1px solid ${c.border}`,
+            background: theme === 'dark'
+              ? 'linear-gradient(180deg, rgba(15,23,42,0.96) 0%, rgba(30,41,59,0.92) 100%)'
+              : `linear-gradient(180deg, #ffffff 0%, ${c.bg} 100%)`,
+            border: `1px solid ${c.border}`,
             boxShadow: '0 10px 30px rgba(15,23,42,0.05)',
             borderRadius: '16px', padding: isMobile ? '12px 10px' : '18px 16px',
             textAlign: isMobile ? 'center' : 'left'
@@ -379,7 +413,7 @@ export default function AdminDashboardHome() {
             </div>
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
               <button onClick={fetchAll} style={{
-                padding: '8px 14px', background: '#ffffff',
+                padding: '8px 14px', background: palette.inputBg,
                 border: `1px solid ${palette.border}`, borderRadius: '8px',
                 color: palette.textMuted, fontSize: '12px', fontWeight: '600',
                 cursor: 'pointer', fontFamily: 'Inter, sans-serif'
@@ -405,8 +439,8 @@ export default function AdminDashboardHome() {
               placeholder="🔍 Search by title, student, department, roll no..."
               style={{
                 flex: isMobile ? '1 0 220px' : 1, minWidth: isMobile ? '220px' : '200px',
-                background: '#ffffff',
-                border: `1px solid ${palette.borderStrong}`,
+                background: palette.inputBg,
+                border: `1px solid ${palette.inputBorder}`,
                 borderRadius: '8px', padding: '9px 14px',
                 color: palette.text, fontSize: '13px', outline: 'none',
                 fontFamily: 'Inter, sans-serif'
@@ -416,7 +450,7 @@ export default function AdminDashboardHome() {
               {['all', 'waiting', 'active', 'completed', 'failed'].map(f => (
                 <button key={f} onClick={() => setFilter(f)} style={{
                   padding: isMobile ? '8px 12px' : '8px 14px', borderRadius: '8px', border: 'none',
-                  background: filter === f ? 'linear-gradient(135deg, #6d28d9, #2563eb)' : '#ffffff',
+                  background: filter === f ? 'linear-gradient(135deg, #6d28d9, #2563eb)' : palette.inputBg,
                   color: filter === f ? '#ffffff' : palette.textMuted,
                   fontSize: '12px', fontWeight: '600', cursor: 'pointer',
                   textTransform: 'capitalize', fontFamily: 'Inter, sans-serif'
@@ -441,12 +475,12 @@ export default function AdminDashboardHome() {
           <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', minWidth: '700px' }}>
               <thead>
-                <tr style={{ background: 'rgba(15,23,42,0.03)' }}>
+                <tr style={{ background: palette.tableHead }}>
                   {['Task', 'Student', 'Type', 'Priority', 'Status', 'Due', 'Files', 'Actions'].map(h => (
                     <th key={h} style={{
-                      padding: '12px 16px', textAlign: 'left', color: '#4b5563',
+                      padding: '12px 16px', textAlign: 'left', color: palette.textMuted,
                       fontWeight: '600', fontSize: '11px', textTransform: 'uppercase',
-                      letterSpacing: '0.5px', borderBottom: '1px solid rgba(255,255,255,0.05)',
+                      letterSpacing: '0.5px', borderBottom: `1px solid ${palette.border}`,
                       whiteSpace: 'nowrap'
                     }}>{h}</th>
                   ))}
@@ -456,7 +490,7 @@ export default function AdminDashboardHome() {
                 {filtered.map((job, i) => (
                   <tr key={job._id} style={{
                     borderBottom: `1px solid ${palette.border}`,
-                    background: i % 2 === 0 ? '#ffffff' : 'rgba(248,250,252,0.8)',
+                    background: i % 2 === 0 ? palette.rowBg : palette.rowAlt,
                   }}>
                     <td style={{ padding: '14px 16px', maxWidth: '200px' }}>
                       <div style={{ color: palette.text, fontWeight: '600', fontSize: '13px', marginBottom: '2px' }}>
@@ -495,8 +529,8 @@ export default function AdminDashboardHome() {
                         alignItems: 'center',
                         padding: isMobile ? '4px 8px' : '0',
                         borderRadius: isMobile ? '999px' : '0',
-                        background: isMobile ? 'rgba(255,255,255,0.04)' : 'transparent',
-                        border: isMobile ? '1px solid rgba(255,255,255,0.08)' : 'none'
+                        background: isMobile ? palette.inputBg : 'transparent',
+                        border: isMobile ? `1px solid ${palette.border}` : 'none'
                       }}>
                         {priorityConfig[job.priority]?.label}
                       </span>
