@@ -54,14 +54,14 @@ export default function Register() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #030712 0%, #0f0a1e 50%, #030712 100%)',
+      background: 'linear-gradient(135deg, #f8fafc 0%, #eef2ff 50%, #f8fafc 100%)',
       display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px'
     }}>
       {/* Glow */}
       <div style={{
         position: 'fixed', top: '20%', left: '50%', transform: 'translateX(-50%)',
         width: '600px', height: '400px',
-        background: 'radial-gradient(circle, rgba(124,58,237,0.08) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(109,40,217,0.08) 0%, transparent 70%)',
         pointerEvents: 'none'
       }} />
 
@@ -70,31 +70,31 @@ export default function Register() {
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <div style={{
             width: '64px', height: '64px', borderRadius: '16px',
-            background: 'linear-gradient(135deg, #7c3aed, #4f46e5)',
+            background: 'linear-gradient(135deg, #6d28d9, #2563eb)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: '28px', margin: '0 auto 16px',
-            boxShadow: '0 0 40px rgba(124,58,237,0.4)'
+            boxShadow: '0 12px 30px rgba(109,40,217,0.18)'
           }}>🎓</div>
-          <h1 style={{ fontSize: '26px', fontWeight: '800', color: '#fff' }}>
+          <h1 style={{ fontSize: '26px', fontWeight: '800', color: '#0f172a' }}>
             College Task Queue
           </h1>
-          <p style={{ color: '#6b7280', marginTop: '6px', fontSize: '14px' }}>
+          <p style={{ color: '#475569', marginTop: '6px', fontSize: '14px' }}>
             Student Task Management System
           </p>
         </div>
 
         {/* Card */}
         <div style={{
-          background: 'rgba(17,24,39,0.85)',
-          border: '1px solid rgba(255,255,255,0.08)',
+          background: 'rgba(255,255,255,0.9)',
+          border: '1px solid rgba(148,163,184,0.22)',
           borderRadius: '20px', padding: '36px',
           backdropFilter: 'blur(20px)',
-          boxShadow: '0 25px 50px rgba(0,0,0,0.5)'
+          boxShadow: '0 25px 50px rgba(15,23,42,0.08)'
         }}>
-          <h2 style={{ fontSize: '18px', fontWeight: '700', marginBottom: '6px', color: '#fff' }}>
+          <h2 style={{ fontSize: '18px', fontWeight: '700', marginBottom: '6px', color: '#0f172a' }}>
             Create Student Account
           </h2>
-          <p style={{ color: '#6b7280', fontSize: '13px', marginBottom: '24px' }}>
+          <p style={{ color: '#475569', fontSize: '13px', marginBottom: '24px' }}>
             Fill in your details to get started
           </p>
 
@@ -161,13 +161,13 @@ export default function Register() {
                       padding: '10px 12px', borderRadius: '10px', border: 'none',
                       cursor: 'pointer', textAlign: 'left', fontFamily: 'Inter, sans-serif',
                       background: form.department === d.value
-                        ? 'rgba(124,58,237,0.25)'
-                        : 'rgba(255,255,255,0.04)',
+                        ? 'rgba(109,40,217,0.12)'
+                        : '#f8fafc',
                       borderWidth: '1px', borderStyle: 'solid',
                       borderColor: form.department === d.value
-                        ? 'rgba(124,58,237,0.5)'
-                        : 'rgba(255,255,255,0.08)',
-                      color: form.department === d.value ? '#fff' : '#6b7280',
+                        ? 'rgba(109,40,217,0.3)'
+                        : 'rgba(148,163,184,0.25)',
+                      color: form.department === d.value ? '#0f172a' : '#475569',
                       fontSize: '12px', fontWeight: '600',
                       transition: 'all 0.2s'
                     }}
@@ -198,11 +198,11 @@ export default function Register() {
               disabled={loading}
               style={{
                 width: '100%', padding: '13px',
-                background: loading ? '#374151' : 'linear-gradient(135deg, #7c3aed, #4f46e5)',
+                background: loading ? '#cbd5e1' : 'linear-gradient(135deg, #6d28d9, #2563eb)',
                 border: 'none', borderRadius: '10px', color: '#fff',
                 fontSize: '15px', fontWeight: '600',
                 cursor: loading ? 'not-allowed' : 'pointer',
-                boxShadow: loading ? 'none' : '0 4px 20px rgba(124,58,237,0.4)',
+                boxShadow: loading ? 'none' : '0 10px 24px rgba(109,40,217,0.22)',
                 marginTop: '6px', fontFamily: 'Inter, sans-serif'
               }}
             >
@@ -210,9 +210,9 @@ export default function Register() {
             </button>
           </div>
 
-          <p style={{ textAlign: 'center', color: '#6b7280', marginTop: '20px', fontSize: '14px' }}>
+          <p style={{ textAlign: 'center', color: '#475569', marginTop: '20px', fontSize: '14px' }}>
             Already have an account?{' '}
-            <Link to="/login" style={{ color: '#a78bfa', textDecoration: 'none', fontWeight: '500' }}>
+            <Link to="/login" style={{ color: '#6d28d9', textDecoration: 'none', fontWeight: '500' }}>
               Sign In
             </Link>
           </p>

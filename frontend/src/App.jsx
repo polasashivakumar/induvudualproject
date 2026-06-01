@@ -18,8 +18,8 @@ export default function App() {
         <BrowserRouter>
           <Toaster position="top-right" toastOptions={{
             style: {
-              background: '#1f2937', color: '#fff',
-              border: '1px solid rgba(255,255,255,0.1)',
+              background: '#ffffff', color: '#0f172a',
+              border: '1px solid rgba(15,23,42,0.08)',
               borderRadius: '12px', fontSize: '13px'
             }
           }} />

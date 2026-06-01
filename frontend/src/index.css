@@ -8,8 +8,8 @@ html {
 }
 
 body {
-  background: #030712;
-  color: #f9fafb;
+  background: #f8fafc;
+  color: #0f172a;
   font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
@@ -22,8 +22,8 @@ body {
 }
 
 ::-webkit-scrollbar { width: 4px; height: 4px; }
-::-webkit-scrollbar-track { background: #111827; }
-::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+::-webkit-scrollbar-track { background: #e2e8f0; }
+::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 3px; }
 
 input, select, button, textarea {
   font-family: 'Inter', sans-serif;

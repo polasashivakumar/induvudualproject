@@ -27,7 +27,7 @@ export default function Login() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #030712 0%, #0f0a1e 50%, #030712 100%)',
+      background: 'linear-gradient(135deg, #f8fafc 0%, #eef2ff 50%, #f8fafc 100%)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -37,7 +37,7 @@ export default function Login() {
       <div style={{
         position: 'fixed', top: '20%', left: '50%', transform: 'translateX(-50%)',
         width: '600px', height: '600px',
-        background: 'radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(109,40,217,0.08) 0%, transparent 70%)',
         pointerEvents: 'none'
       }} />
 
@@ -46,28 +46,28 @@ export default function Login() {
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
           <div style={{
             width: '64px', height: '64px', borderRadius: '16px',
-            background: 'linear-gradient(135deg, #7c3aed, #4f46e5)',
+            background: 'linear-gradient(135deg, #6d28d9, #2563eb)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '28px', margin: '0 auto 16px', boxShadow: '0 0 40px rgba(139,92,246,0.3)'
+            fontSize: '28px', margin: '0 auto 16px', boxShadow: '0 12px 30px rgba(109,40,217,0.18)'
           }}>⚡</div>
-          <h1 style={{ fontSize: '28px', fontWeight: '800', color: '#fff', letterSpacing: '-0.5px' }}>
+          <h1 style={{ fontSize: '28px', fontWeight: '800', color: '#0f172a', letterSpacing: '-0.5px' }}>
             Task Queue
           </h1>
-          <p style={{ color: '#6b7280', marginTop: '6px', fontSize: '14px' }}>
+          <p style={{ color: '#475569', marginTop: '6px', fontSize: '14px' }}>
             Distributed Job Processing System
           </p>
         </div>
 
         {/* Card */}
         <div style={{
-          background: 'rgba(17, 24, 39, 0.8)',
-          border: '1px solid rgba(255,255,255,0.08)',
+          background: 'rgba(255,255,255,0.9)',
+          border: '1px solid rgba(148,163,184,0.22)',
           borderRadius: '20px',
           padding: '36px',
           backdropFilter: 'blur(20px)',
-          boxShadow: '0 25px 50px rgba(0,0,0,0.5)'
+          boxShadow: '0 25px 50px rgba(15,23,42,0.08)'
         }}>
-          <h2 style={{ fontSize: '20px', fontWeight: '700', marginBottom: '24px', color: '#fff' }}>
+          <h2 style={{ fontSize: '20px', fontWeight: '700', marginBottom: '24px', color: '#0f172a' }}>
             Sign In
           </h2>
 
@@ -82,13 +82,13 @@ export default function Login() {
                 onChange={e => setForm({ ...form, email: e.target.value })}
                 placeholder="you@example.com"
                 style={{
-                  width: '100%', background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px',
-                  padding: '12px 16px', color: '#fff', fontSize: '14px', outline: 'none',
+                  width: '100%', background: '#f8fafc',
+                  border: '1px solid rgba(148,163,184,0.25)', borderRadius: '10px',
+                  padding: '12px 16px', color: '#0f172a', fontSize: '14px', outline: 'none',
                   transition: 'border-color 0.2s'
                 }}
-                onFocus={e => e.target.style.borderColor = '#7c3aed'}
-                onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
+                onFocus={e => e.target.style.borderColor = '#6d28d9'}
+                onBlur={e => e.target.style.borderColor = 'rgba(148,163,184,0.25)'}
               />
             </div>
 
@@ -103,12 +103,12 @@ export default function Login() {
                 placeholder="••••••••"
                 onKeyDown={e => e.key === 'Enter' && handleSubmit()}
                 style={{
-                  width: '100%', background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px',
-                  padding: '12px 16px', color: '#fff', fontSize: '14px', outline: 'none'
+                  width: '100%', background: '#f8fafc',
+                  border: '1px solid rgba(148,163,184,0.25)', borderRadius: '10px',
+                  padding: '12px 16px', color: '#0f172a', fontSize: '14px', outline: 'none'
                 }}
-                onFocus={e => e.target.style.borderColor = '#7c3aed'}
-                onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
+                onFocus={e => e.target.style.borderColor = '#6d28d9'}
+                onBlur={e => e.target.style.borderColor = 'rgba(148,163,184,0.25)'}
               />
             </div>
 
@@ -117,10 +117,10 @@ export default function Login() {
               disabled={loading}
               style={{
                 width: '100%', padding: '13px',
-                background: loading ? '#4b5563' : 'linear-gradient(135deg, #7c3aed, #4f46e5)',
+                background: loading ? '#cbd5e1' : 'linear-gradient(135deg, #6d28d9, #2563eb)',
                 border: 'none', borderRadius: '10px', color: '#fff',
                 fontSize: '15px', fontWeight: '600', cursor: loading ? 'not-allowed' : 'pointer',
-                boxShadow: loading ? 'none' : '0 4px 20px rgba(124,58,237,0.4)',
+                boxShadow: loading ? 'none' : '0 10px 24px rgba(109,40,217,0.22)',
                 transition: 'all 0.2s', marginTop: '4px'
               }}
             >
@@ -128,15 +128,15 @@ export default function Login() {
             </button>
           </div>
 
-          <p style={{ textAlign: 'center', color: '#6b7280', marginTop: '20px', fontSize: '14px' }}>
+          <p style={{ textAlign: 'center', color: '#475569', marginTop: '20px', fontSize: '14px' }}>
             Don't have an account?{' '}
-            <Link to="/register" style={{ color: '#a78bfa', textDecoration: 'none', fontWeight: '500' }}>
+            <Link to="/register" style={{ color: '#6d28d9', textDecoration: 'none', fontWeight: '500' }}>
               Register
             </Link>
           </p>
         </div>
 
-        <p style={{ textAlign: 'center', color: '#374151', fontSize: '12px', marginTop: '24px' }}>
+        <p style={{ textAlign: 'center', color: '#64748b', fontSize: '12px', marginTop: '24px' }}>
           College Project — Distributed Task Queue System
         </p>
       </div>

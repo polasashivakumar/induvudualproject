@@ -221,6 +221,74 @@ export default function StudentsList() {
         gap: '20px',
       }}
     >
+      {/* Update Modal */}
+      {updatingJob && (
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <h3>✏️ Update Task Status</h3>
+
+            <p style={{ color: '#9ca3af' }}>
+              {typeConfig[updatingJob.type]?.icon}{' '}
+              {updatingJob.title}
+            </p>
+
+            <textarea
+              rows={3}
+              value={adminNote}
+              onChange={(e) =>
+                setAdminNote(e.target.value)
+              }
+              placeholder="Feedback for student..."
+              className="input"
+            />
+
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: '10px',
+                marginBottom: '16px',
+              }}
+            >
+              {[
+                {
+                  state: 'active',
+                  label: '⚙️ Processing',
+                },
+                {
+                  state: 'completed',
+                  label: '✅ Completed',
+                },
+                { state: 'failed', label: '❌ Failed' },
+              ].map((item) => (
+                <button
+                  key={item.state}
+                  onClick={() =>
+                    updateJobStatus(
+                      updatingJob._id,
+                      item.state
+                    )
+                  }
+                  className="btn-primary"
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => {
+                setUpdatingJob(null)
+                setAdminNote('')
+              }}
+              className="btn-secondary"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Rating Modal */}
       {ratingJob && (
         <div className="modal-overlay">
