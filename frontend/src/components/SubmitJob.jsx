@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import API from '../api/axios'
 import toast from 'react-hot-toast'
 import FileUpload from './FileUpload'
+import { useTheme } from '../context/ThemeContext'
 
 const taskTypes = [
   { value: 'assignment', icon: '📝', label: 'Assignment', desc: 'Submit assignment' },
@@ -33,6 +34,7 @@ const templates = [
 ]
 
 export default function SubmitJob({ onSubmitted, prefill }) {
+  const { colors } = useTheme()
   const [form, setForm] = useState({
     type: prefill?.type || 'assignment',
     title: prefill?.title || '',
@@ -102,9 +104,9 @@ export default function SubmitJob({ onSubmitted, prefill }) {
   }
 
   const inputStyle = {
-    width: '100%', background: 'rgba(255,255,255,0.05)',
-    border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px',
-    padding: '12px 16px', color: '#fff', fontSize: '14px', outline: 'none',
+    width: '100%', background: colors.inputBg,
+    border: `1px solid ${colors.inputBorder}`, borderRadius: '10px',
+    padding: '12px 16px', color: colors.text, fontSize: '14px', outline: 'none',
     fontFamily: 'Inter, sans-serif', transition: 'border-color 0.2s',
     boxSizing: 'border-box'
   }
@@ -116,25 +118,25 @@ export default function SubmitJob({ onSubmitted, prefill }) {
   return (
     <div style={{ maxWidth: '680px', margin: '0 auto' }}>
       <div style={{
-        background: 'rgba(17,24,39,0.8)',
-        border: '1px solid rgba(255,255,255,0.08)',
+        background: colors.card,
+        border: `1px solid ${colors.cardBorder}`,
         borderRadius: '20px', padding: isMobile ? '20px 16px' : '32px',
         backdropFilter: 'blur(20px)'
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
           <div>
-            <h2 style={{ fontSize: '20px', fontWeight: '700', color: '#fff' }}>
+            <h2 style={{ fontSize: '20px', fontWeight: '700', color: colors.text }}>
               📋 Submit New Task
             </h2>
-            <p style={{ color: '#6b7280', fontSize: '12px', marginTop: '4px' }}>
+            <p style={{ color: colors.muted, fontSize: '12px', marginTop: '4px' }}>
               Fill in the details or use a template to get started quickly
             </p>
           </div>
           <button onClick={() => setShowTemplates(!showTemplates)} style={{
             padding: '9px 16px',
-            background: showTemplates ? 'rgba(124,58,237,0.3)' : 'rgba(124,58,237,0.15)',
-            border: '1px solid rgba(124,58,237,0.3)', borderRadius: '10px',
-            color: '#a78bfa', fontSize: '13px', fontWeight: '600',
+            background: showTemplates ? colors.primarySoftBg : colors.inputBg,
+            border: `1px solid ${colors.primarySoftBorder}`, borderRadius: '10px',
+            color: colors.softPurple, fontSize: '13px', fontWeight: '600',
             cursor: 'pointer', fontFamily: 'Inter, sans-serif',
             display: 'flex', alignItems: 'center', gap: '6px'
           }}>
@@ -143,13 +145,13 @@ export default function SubmitJob({ onSubmitted, prefill }) {
         </div>
 
         {showTemplates && (
-          <div style={{
-            background: 'rgba(124,58,237,0.06)',
-            border: '1px solid rgba(124,58,237,0.15)',
+            <div style={{
+            background: colors.primarySoftBg,
+            border: `1px solid ${colors.primarySoftBorder}`,
             borderRadius: '14px', padding: '16px', marginBottom: '24px'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-              <p style={{ color: '#a78bfa', fontSize: '13px', fontWeight: '600' }}>
+              <p style={{ color: colors.softPurple, fontSize: '13px', fontWeight: '600' }}>
                 ⚡ Quick Templates
               </p>
               <input
@@ -157,10 +159,10 @@ export default function SubmitJob({ onSubmitted, prefill }) {
                 onChange={e => setTemplateSearch(e.target.value)}
                 placeholder="Search templates..."
                 style={{
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: colors.inputBg,
+                  border: `1px solid ${colors.inputBorder}`,
                   borderRadius: '8px', padding: '6px 12px',
-                  color: '#fff', fontSize: '12px', outline: 'none',
+                  color: colors.text, fontSize: '12px', outline: 'none',
                   fontFamily: 'Inter, sans-serif', width: '160px'
                 }}
               />
@@ -180,9 +182,9 @@ export default function SubmitJob({ onSubmitted, prefill }) {
                   {group.items.map(t => (
                     <button key={t.id} onClick={() => applyTemplate(t)} style={{
                       padding: '7px 12px',
-                      background: usedTemplate === t.id ? 'rgba(124,58,237,0.3)' : 'rgba(255,255,255,0.04)',
-                      border: `1px solid ${usedTemplate === t.id ? 'rgba(124,58,237,0.4)' : 'rgba(255,255,255,0.08)'}`,
-                      borderRadius: '8px', color: usedTemplate === t.id ? '#a78bfa' : '#9ca3af',
+                      background: usedTemplate === t.id ? colors.primarySoftBg : colors.inputBg,
+                      border: `1px solid ${usedTemplate === t.id ? colors.primarySoftBorder : colors.inputBorder}`,
+                      borderRadius: '8px', color: usedTemplate === t.id ? colors.softPurple : colors.muted,
                       fontSize: '12px', fontWeight: '500', cursor: 'pointer',
                       fontFamily: 'Inter, sans-serif', transition: 'all 0.2s',
                       display: 'flex', alignItems: 'center', gap: '5px'

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import API from '../api/axios'
 import { FILE_BASE_URL } from '../api/config'
 import toast from 'react-hot-toast'
+import { useTheme } from '../context/ThemeContext'
 
 const DEPARTMENTS = ['ALL', 'IT', 'CSE', 'ECE', 'EEE', 'AIML', 'DS']
 
@@ -72,6 +73,7 @@ const stateConfig = {
 export default function StudentsList() {
   const [students, setStudents] = useState([])
   const [loading, setLoading] = useState(true)
+  const { colors } = useTheme()
 
   const [selected, setSelected] = useState(null)
   const [studentJobs, setStudentJobs] = useState([])
@@ -452,15 +454,8 @@ export default function StudentsList() {
                 padding: '16px',
                 borderRadius: '16px',
                 cursor: 'pointer',
-                background:
-                  deptFilter === d.dept
-                    ? dc.bg
-                    : 'rgba(17,24,39,0.6)',
-                border: `1px solid ${
-                  deptFilter === d.dept
-                    ? dc.border
-                    : 'rgba(255,255,255,0.08)'
-                }`,
+                background: deptFilter === d.dept ? dc.bg : colors.card,
+                border: `1px solid ${deptFilter === d.dept ? dc.border : colors.cardBorder}`,
               }}
             >
               <h3
@@ -472,18 +467,9 @@ export default function StudentsList() {
                 {d.dept}
               </h3>
 
-              <p style={{ color: '#9ca3af' }}>
-                {d.count} students
-              </p>
+              <p style={{ color: colors.textSecondary }}>{d.count} students</p>
 
-              <p
-                style={{
-                  color: '#10b981',
-                  fontWeight: 'bold',
-                }}
-              >
-                {rate}% completed
-              </p>
+              <p style={{ color: colors.success, fontWeight: 'bold' }}>{rate}% completed</p>
             </div>
           )
         })}
@@ -501,11 +487,10 @@ export default function StudentsList() {
         <div
           style={{
             width: '320px',
-            background: 'rgba(17,24,39,0.6)',
+            background: colors.card,
             borderRadius: '20px',
             overflow: 'hidden',
-            border:
-              '1px solid rgba(255,255,255,0.08)',
+            border: `1px solid ${colors.cardBorder}`,
           }}
         >
           <div style={{ padding: '16px' }}>
@@ -527,14 +512,7 @@ export default function StudentsList() {
             }}
           >
             {loading ? (
-              <p
-                style={{
-                  padding: '20px',
-                  color: '#9ca3af',
-                }}
-              >
-                Loading...
-              </p>
+              <p style={{ padding: '20px', color: colors.textSecondary }}>Loading...</p>
             ) : (
               filteredStudents.map(
                 ({ student, stats }) => (
@@ -549,8 +527,7 @@ export default function StudentsList() {
                     style={{
                       padding: '14px 16px',
                       cursor: 'pointer',
-                      borderBottom:
-                        '1px solid rgba(255,255,255,0.05)',
+                      borderBottom: `1px solid ${colors.inputBorder}`,
                     }}
                   >
                     <h4 style={{ color: '#fff' }}>
@@ -586,41 +563,20 @@ export default function StudentsList() {
         <div
           style={{
             flex: 1,
-            background: 'rgba(17,24,39,0.6)',
+            background: colors.card,
             borderRadius: '20px',
             overflow: 'hidden',
-            border:
-              '1px solid rgba(255,255,255,0.08)',
+            border: `1px solid ${colors.cardBorder}`,
           }}
         >
           {!selected ? (
-            <div
-              style={{
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#6b7280',
-              }}
-            >
-              Select a student
-            </div>
+            <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: colors.muted }}>Select a student</div>
           ) : (
             <>
               <div
-                style={{
-                  padding: '20px',
-                  borderBottom:
-                    '1px solid rgba(255,255,255,0.06)',
-                }}
-              >
-                <h2 style={{ color: '#fff' }}>
-                  {selected.student.name}
-                </h2>
-
-                <p style={{ color: '#9ca3af' }}>
-                  {selected.student.email}
-                </p>
+                style={{ padding: '20px', borderBottom: `1px solid ${colors.inputBorder}` }}>
+                <h2 style={{ color: colors.text }}>{selected.student.name}</h2>
+                <p style={{ color: colors.textSecondary }}>{selected.student.email}</p>
               </div>
 
               <div

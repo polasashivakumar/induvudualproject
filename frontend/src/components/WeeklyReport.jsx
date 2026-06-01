@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import API from '../api/axios'
+import { useTheme } from '../context/ThemeContext'
 
 export default function WeeklyReport() {
+  const { colors } = useTheme()
   const [report, setReport] = useState(null)
   const [loading, setLoading] = useState(true)
 
@@ -26,21 +28,21 @@ export default function WeeklyReport() {
 
   if (loading) return (
     <div style={{
-      background: 'rgba(17,24,39,0.6)', border: '1px solid rgba(255,255,255,0.08)',
-      borderRadius: '20px', padding: '24px', textAlign: 'center', color: '#4b5563'
+      background: colors.card, border: `1px solid ${colors.cardBorder}`,
+      borderRadius: '20px', padding: '24px', textAlign: 'center', color: colors.textSecondary
     }}>Loading report...</div>
   )
 
   return (
     <div style={{
-      background: 'rgba(17,24,39,0.6)', border: '1px solid rgba(255,255,255,0.08)',
+      background: colors.card, border: `1px solid ${colors.cardBorder}`,
       borderRadius: '20px', padding: '24px', backdropFilter: 'blur(10px)'
     }}>
       <div style={{ marginBottom: '20px' }}>
-        <h3 style={{ color: '#fff', fontWeight: '700', fontSize: '16px' }}>
+        <h3 style={{ color: colors.text, fontWeight: '700', fontSize: '16px' }}>
           📊 Weekly Progress Report
         </h3>
-        <p style={{ color: '#4b5563', fontSize: '12px', marginTop: '2px' }}>
+        <p style={{ color: colors.textSecondary, fontSize: '12px', marginTop: '2px' }}>
           Last 7 days summary
         </p>
       </div>
@@ -52,17 +54,17 @@ export default function WeeklyReport() {
         </p>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '8px' }}>
           {[
-            { label: 'Submitted', value: report?.thisWeek?.total, color: '#7c3aed' },
-            { label: 'Completed', value: report?.thisWeek?.completed, color: '#10b981' },
-            { label: 'Pending', value: report?.thisWeek?.pending, color: '#f59e0b' },
-            { label: 'Failed', value: report?.thisWeek?.failed, color: '#ef4444' },
+            { label: 'Submitted', value: report?.thisWeek?.total, color: colors.primary },
+            { label: 'Completed', value: report?.thisWeek?.completed, color: colors.success },
+            { label: 'Pending', value: report?.thisWeek?.pending, color: colors.warning },
+            { label: 'Failed', value: report?.thisWeek?.failed, color: colors.danger },
           ].map(s => (
             <div key={s.label} style={{
-              background: 'rgba(0,0,0,0.2)', borderRadius: '10px',
-              padding: '12px', textAlign: 'center'
+              background: colors.inputBg, borderRadius: '10px',
+              padding: '12px', textAlign: 'center', border: `1px solid ${colors.inputBorder}`
             }}>
               <div style={{ fontSize: '22px', fontWeight: '800', color: s.color }}>{s.value ?? 0}</div>
-              <div style={{ fontSize: '10px', color: '#6b7280', marginTop: '2px' }}>{s.label}</div>
+              <div style={{ fontSize: '10px', color: colors.muted, marginTop: '2px' }}>{s.label}</div>
             </div>
           ))}
         </div>
@@ -70,30 +72,30 @@ export default function WeeklyReport() {
 
       {/* All time */}
       <div style={{
-        background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.15)',
+        background: colors.primarySoftBg, border: `1px solid ${colors.primarySoftBorder}`,
         borderRadius: '12px', padding: '16px', marginBottom: '16px'
       }}>
-        <p style={{ color: '#a78bfa', fontSize: '12px', fontWeight: '600', marginBottom: '10px' }}>
+        <p style={{ color: colors.softPurple, fontSize: '12px', fontWeight: '600', marginBottom: '10px' }}>
           All Time Performance
         </p>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '24px', fontWeight: '800', color: '#fff' }}>
+            <div style={{ fontSize: '24px', fontWeight: '800', color: colors.text }}>
               {report?.allTime?.total ?? 0}
             </div>
-            <div style={{ fontSize: '11px', color: '#6b7280' }}>Total Tasks</div>
+            <div style={{ fontSize: '11px', color: colors.muted }}>Total Tasks</div>
           </div>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '24px', fontWeight: '800', color: '#10b981' }}>
+            <div style={{ fontSize: '24px', fontWeight: '800', color: colors.success }}>
               {report?.allTime?.completionRate ?? 0}%
             </div>
-            <div style={{ fontSize: '11px', color: '#6b7280' }}>Success Rate</div>
+            <div style={{ fontSize: '11px', color: colors.muted }}>Success Rate</div>
           </div>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '24px', fontWeight: '800', color: '#f59e0b' }}>
+            <div style={{ fontSize: '24px', fontWeight: '800', color: colors.warning }}>
               {report?.allTime?.avgRating > 0 ? `${report.allTime.avgRating}⭐` : 'N/A'}
             </div>
-            <div style={{ fontSize: '11px', color: '#6b7280' }}>Avg Rating</div>
+            <div style={{ fontSize: '11px', color: colors.muted }}>Avg Rating</div>
           </div>
         </div>
       </div>
@@ -108,14 +110,14 @@ export default function WeeklyReport() {
             {report.byType.map(t => (
               <div key={t._id} style={{
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                background: 'rgba(255,255,255,0.03)', borderRadius: '8px', padding: '10px 14px'
+                background: colors.rowAlt, borderRadius: '8px', padding: '10px 14px', border: `1px solid ${colors.inputBorder}`
               }}>
-                <span style={{ color: '#e5e7eb', fontSize: '13px' }}>
+                <span style={{ color: colors.text, fontSize: '13px' }}>
                   {typeLabels[t._id] || t._id}
                 </span>
                 <div style={{ display: 'flex', gap: '12px' }}>
-                  <span style={{ color: '#6b7280', fontSize: '12px' }}>{t.count} total</span>
-                  <span style={{ color: '#10b981', fontSize: '12px', fontWeight: '600' }}>
+                  <span style={{ color: colors.muted, fontSize: '12px' }}>{t.count} total</span>
+                  <span style={{ color: colors.success, fontSize: '12px', fontWeight: '600' }}>
                     {t.completed} done
                   </span>
                 </div>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTheme } from '../context/ThemeContext'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend } from 'recharts'
 import API from '../api/axios'
 
@@ -15,6 +16,7 @@ const typeLabels = {
 export default function AdminAnalytics() {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
+  const { colors } = useTheme()
 
   useEffect(() => {
     const fetch = async () => {
@@ -29,8 +31,8 @@ export default function AdminAnalytics() {
 
   if (loading) return (
     <div style={{
-      background: 'rgba(17,24,39,0.6)', border: '1px solid rgba(255,255,255,0.08)',
-      borderRadius: '20px', padding: '40px', textAlign: 'center', color: '#4b5563'
+      background: colors.card, border: `1px solid ${colors.cardBorder}`,
+      borderRadius: '20px', padding: '40px', textAlign: 'center', color: colors.muted
     }}>Loading analytics...</div>
   )
 
@@ -61,12 +63,12 @@ export default function AdminAnalytics() {
           { label: 'Failed', value: data?.byState?.find(s => s._id === 'failed')?.count || 0, icon: '❌', color: '#ef4444' },
         ].map(card => (
           <div key={card.label} style={{
-            background: 'rgba(17,24,39,0.6)', border: '1px solid rgba(255,255,255,0.08)',
+            background: colors.card, border: `1px solid ${colors.cardBorder}`,
             borderRadius: '16px', padding: '20px', textAlign: 'center'
           }}>
             <div style={{ fontSize: '24px', marginBottom: '8px' }}>{card.icon}</div>
             <div style={{ fontSize: '28px', fontWeight: '800', color: card.color }}>{card.value}</div>
-            <div style={{ color: '#6b7280', fontSize: '12px', marginTop: '4px' }}>{card.label}</div>
+            <div style={{ color: colors.muted, fontSize: '12px', marginTop: '4px' }}>{card.label}</div>
           </div>
         ))}
       </div>
@@ -75,17 +77,17 @@ export default function AdminAnalytics() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
         {/* Task by type */}
         <div style={{
-          background: 'rgba(17,24,39,0.6)', border: '1px solid rgba(255,255,255,0.08)',
+          background: colors.card, border: `1px solid ${colors.cardBorder}`,
           borderRadius: '20px', padding: '24px'
         }}>
-          <h3 style={{ color: '#fff', fontWeight: '700', fontSize: '15px', marginBottom: '20px' }}>
+          <h3 style={{ color: colors.text, fontWeight: '700', fontSize: '15px', marginBottom: '20px' }}>
             📊 Tasks by Type
           </h3>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={typeData}>
-              <XAxis dataKey="name" tick={{ fill: '#6b7280', fontSize: 10 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: '#6b7280', fontSize: 10 }} axisLine={false} tickLine={false} allowDecimals={false} />
-              <Tooltip contentStyle={{ background: '#1f2937', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', color: '#fff', fontSize: '12px' }} cursor={{ fill: 'rgba(124,58,237,0.1)' }} />
+              <XAxis dataKey="name" tick={{ fill: colors.muted, fontSize: 10 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: colors.muted, fontSize: 10 }} axisLine={false} tickLine={false} allowDecimals={false} />
+              <Tooltip contentStyle={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, borderRadius: '10px', color: colors.text, fontSize: '12px' }} cursor={{ fill: 'rgba(124,58,237,0.1)' }} />
               <Bar dataKey="count" radius={[6, 6, 0, 0]}>
                 {typeData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
               </Bar>
@@ -95,10 +97,10 @@ export default function AdminAnalytics() {
 
         {/* Task by state pie */}
         <div style={{
-          background: 'rgba(17,24,39,0.6)', border: '1px solid rgba(255,255,255,0.08)',
+          background: colors.card, border: `1px solid ${colors.cardBorder}`,
           borderRadius: '20px', padding: '24px'
         }}>
-          <h3 style={{ color: '#fff', fontWeight: '700', fontSize: '15px', marginBottom: '20px' }}>
+          <h3 style={{ color: colors.text, fontWeight: '700', fontSize: '15px', marginBottom: '20px' }}>
             🥧 Status Distribution
           </h3>
           <ResponsiveContainer width="100%" height={200}>
@@ -115,10 +117,10 @@ export default function AdminAnalytics() {
       {/* Department stats */}
       {deptData.length > 0 && (
         <div style={{
-          background: 'rgba(17,24,39,0.6)', border: '1px solid rgba(255,255,255,0.08)',
+          background: colors.card, border: `1px solid ${colors.cardBorder}`,
           borderRadius: '20px', padding: '24px'
         }}>
-          <h3 style={{ color: '#fff', fontWeight: '700', fontSize: '15px', marginBottom: '16px' }}>
+          <h3 style={{ color: colors.text, fontWeight: '700', fontSize: '15px', marginBottom: '16px' }}>
             🏫 Department Performance
           </h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -127,9 +129,9 @@ export default function AdminAnalytics() {
               return (
                 <div key={d.name} style={{
                   display: 'flex', alignItems: 'center', gap: '16px',
-                  background: 'rgba(255,255,255,0.03)', borderRadius: '10px', padding: '12px 16px'
+                  background: colors.rowAlt, borderRadius: '10px', padding: '12px 16px'
                 }}>
-                  <div style={{ width: '140px', color: '#e5e7eb', fontSize: '13px', fontWeight: '500', flexShrink: 0 }}>
+                  <div style={{ width: '140px', color: colors.text, fontSize: '13px', fontWeight: '500', flexShrink: 0 }}>
                     {d.name || 'Unknown'}
                   </div>
                   <div style={{ flex: 1 }}>
@@ -142,8 +144,8 @@ export default function AdminAnalytics() {
                     </div>
                   </div>
                   <div style={{ width: '80px', textAlign: 'right', flexShrink: 0 }}>
-                    <span style={{ color: '#10b981', fontWeight: '700', fontSize: '13px' }}>{rate}%</span>
-                    <span style={{ color: '#4b5563', fontSize: '11px', marginLeft: '4px' }}>({d.total})</span>
+                    <span style={{ color: colors.success, fontWeight: '700', fontSize: '13px' }}>{rate}%</span>
+                    <span style={{ color: colors.muted, fontSize: '11px', marginLeft: '4px' }}>({d.total})</span>
                   </div>
                 </div>
               )

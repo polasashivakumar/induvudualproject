@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
+import { useTheme } from '../context/ThemeContext'
 
 export default function CountdownTimer({ jobs }) {
   const [now, setNow] = useState(new Date())
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+  const { colors } = useTheme()
 
   useEffect(() => {
     const interval = setInterval(() => setNow(new Date()), 1000)
@@ -36,16 +38,16 @@ export default function CountdownTimer({ jobs }) {
 
   return (
     <div style={{
-      background: 'rgba(17,24,39,0.6)', border: '1px solid rgba(255,255,255,0.08)',
+      background: colors.card, border: `1px solid ${colors.cardBorder}`,
       borderRadius: '20px', padding: isMobile ? '18px' : '24px', backdropFilter: 'blur(10px)',
       minWidth: 0,        // ✅ FIX
       overflow: 'hidden'  // ✅ FIX
     }}>
       <div style={{ marginBottom: '16px' }}>
-        <h3 style={{ color: '#fff', fontWeight: '700', fontSize: isMobile ? '15px' : '16px' }}>
+        <h3 style={{ color: colors.text, fontWeight: '700', fontSize: isMobile ? '15px' : '16px' }}>
           ⏰ Deadline Countdown
         </h3>
-        <p style={{ color: '#4b5563', fontSize: isMobile ? '11px' : '12px', marginTop: '2px' }}>
+        <p style={{ color: colors.muted, fontSize: isMobile ? '11px' : '12px', marginTop: '2px' }}>
           Live countdown for upcoming tasks
         </p>
       </div>
@@ -69,7 +71,7 @@ export default function CountdownTimer({ jobs }) {
 
       {/* Upcoming */}
       {upcoming.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: isMobile ? '22px 12px' : '30px', color: '#4b5563' }}>
+        <div style={{ textAlign: 'center', padding: isMobile ? '22px 12px' : '30px', color: colors.muted }}>
           <div style={{ fontSize: isMobile ? '28px' : '32px', marginBottom: '8px' }}>🎉</div>
           <p style={{ fontSize: isMobile ? '12px' : '13px' }}>No upcoming deadlines!</p>
         </div>
@@ -79,25 +81,25 @@ export default function CountdownTimer({ jobs }) {
             const time = getTimeLeft(job.dueDate)
             return (
               <div key={job._id} style={{
-                background: time.urgent ? 'rgba(239,68,68,0.1)' : 'rgba(255,255,255,0.04)',
-                border: `1px solid ${time.urgent ? 'rgba(239,68,68,0.3)' : 'rgba(255,255,255,0.08)'}`,
+                background: time.urgent ? 'rgba(239,68,68,0.1)' : colors.inputBg,
+                border: `1px solid ${time.urgent ? 'rgba(239,68,68,0.3)' : colors.inputBorder}`,
                 borderRadius: '12px', padding: isMobile ? '12px' : '12px 14px',
                 display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between',
                 alignItems: isMobile ? 'stretch' : 'center', gap: '8px'
               }}>
                 <div style={{ minWidth: 0, flex: 1 }}>  {/* ✅ FIX */}
                   <div style={{
-                    color: '#e5e7eb', fontWeight: '600', fontSize: isMobile ? '12px' : '13px',
+                    color: colors.text, fontWeight: '600', fontSize: isMobile ? '12px' : '13px',
                     overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: isMobile ? 'normal' : 'nowrap'
                   }}>
                     {job.title}
                   </div>
-                  <div style={{ color: '#4b5563', fontSize: '11px', marginTop: '2px' }}>
+                  <div style={{ color: colors.muted, fontSize: '11px', marginTop: '2px' }}>
                     Due: {new Date(job.dueDate).toLocaleDateString()}
                   </div>
                 </div>
                 <div style={{
-                  color: time.urgent ? '#ef4444' : '#10b981',
+                  color: time.urgent ? colors.danger : colors.success,
                   fontWeight: '700', fontSize: isMobile ? '11px' : '12px',
                   background: time.urgent ? 'rgba(239,68,68,0.1)' : 'rgba(16,185,129,0.1)',
                   padding: isMobile ? '6px 8px' : '6px 10px', borderRadius: '8px',

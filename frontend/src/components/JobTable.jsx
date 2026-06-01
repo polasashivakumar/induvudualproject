@@ -3,6 +3,7 @@ import useSocket from '../hooks/useSocket'
 import API from '../api/axios'
 import { useAuth } from '../context/AuthContext'
 import toast from 'react-hot-toast'
+import { useTheme } from '../context/ThemeContext'
 
 const stateConfig = {
   waiting: {
@@ -42,6 +43,7 @@ const priorityConfig = {
 }
 
 export default function JobTable({ onJobsUpdate }) {
+  const { colors } = useTheme()
   const [jobs, setJobs] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('all')
@@ -439,16 +441,16 @@ export default function JobTable({ onJobsUpdate }) {
               }
               placeholder="Write a comment..."
               rows={2}
-              style={{
-                width: '100%',
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                borderRadius: '10px',
-                padding: '12px',
-                color: '#fff',
-                resize: 'none',
-                marginBottom: '12px'
-              }}
+                style={{
+                  width: '100%',
+                  background: colors.inputBg,
+                  border: `1px solid ${colors.inputBorder}`,
+                  borderRadius: '10px',
+                  padding: '12px',
+                  color: colors.text,
+                  resize: 'none',
+                  marginBottom: '12px'
+                }}
             />
 
             <div style={{ display: 'flex', gap: '8px' }}>
@@ -461,7 +463,7 @@ export default function JobTable({ onJobsUpdate }) {
                     'linear-gradient(135deg, #7c3aed, #4f46e5)',
                   border: 'none',
                   borderRadius: '8px',
-                  color: '#fff',
+                  color: colors.lightOnPrimary,
                   cursor: 'pointer'
                 }}
               >
@@ -475,10 +477,10 @@ export default function JobTable({ onJobsUpdate }) {
                 }}
                 style={{
                   padding: '10px 16px',
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: colors.inputBg,
+                  border: `1px solid ${colors.inputBorder}`,
                   borderRadius: '8px',
-                  color: '#9ca3af',
+                  color: colors.textSecondary,
                   cursor: 'pointer'
                 }}
               >
@@ -492,8 +494,8 @@ export default function JobTable({ onJobsUpdate }) {
       {/* ===== MAIN TABLE ===== */}
       <div
         style={{
-          background: 'rgba(17,24,39,0.6)',
-          border: '1px solid rgba(255,255,255,0.08)',
+          background: colors.card,
+          border: `1px solid ${colors.cardBorder}`,
           borderRadius: '20px',
           overflow: 'hidden'
         }}
@@ -502,8 +504,7 @@ export default function JobTable({ onJobsUpdate }) {
         <div
           style={{
             padding: '20px',
-            borderBottom:
-              '1px solid rgba(255,255,255,0.06)'
+            borderBottom: `1px solid ${colors.inputBorder}`
           }}
         >
           <div
@@ -518,7 +519,7 @@ export default function JobTable({ onJobsUpdate }) {
             <div>
               <h3
                 style={{
-                  color: '#fff',
+                  color: colors.text,
                   fontWeight: '700',
                   fontSize: '16px'
                 }}
@@ -530,7 +531,7 @@ export default function JobTable({ onJobsUpdate }) {
 
               <p
                 style={{
-                  color: '#6b7280',
+                  color: colors.muted,
                   fontSize: '12px'
                 }}
               >

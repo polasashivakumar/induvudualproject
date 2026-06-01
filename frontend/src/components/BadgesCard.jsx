@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import API from '../api/axios'
+import { useTheme } from '../context/ThemeContext'
 
 const allBadges = [
   { id: 'first_task', name: 'First Task', icon: '🎯', desc: 'Complete your first task' },
@@ -11,6 +12,7 @@ const allBadges = [
 ]
 
 export default function BadgesCard() {
+  const { colors } = useTheme()
   const [earned, setEarned] = useState([])
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
 
@@ -39,16 +41,16 @@ export default function BadgesCard() {
 
   return (
     <div style={{
-      background: 'rgba(17,24,39,0.6)', border: '1px solid rgba(255,255,255,0.08)',
+      background: colors.card, border: `1px solid ${colors.cardBorder}`,
       borderRadius: '20px', padding: isMobile ? '18px' : '24px', backdropFilter: 'blur(10px)',
       minWidth: 0,
       overflow: 'hidden'
     }}>
       <div style={{ marginBottom: '16px' }}>
-        <h3 style={{ color: '#fff', fontWeight: '700', fontSize: isMobile ? '15px' : '16px' }}>
+        <h3 style={{ color: colors.text, fontWeight: '700', fontSize: isMobile ? '15px' : '16px' }}>
           🏅 Achievement Badges
         </h3>
-        <p style={{ color: '#4b5563', fontSize: '12px', marginTop: '2px' }}>
+        <p style={{ color: colors.muted, fontSize: '12px', marginTop: '2px' }}>
           {earned.length}/{allBadges.length} earned
         </p>
       </div>
@@ -58,19 +60,19 @@ export default function BadgesCard() {
           const isEarned = earned.includes(badge.id)
           return (
             <div key={badge.id} style={{
-              background: isEarned ? 'rgba(245,158,11,0.1)' : 'rgba(255,255,255,0.03)',
-              border: `1px solid ${isEarned ? 'rgba(245,158,11,0.3)' : 'rgba(255,255,255,0.06)'}`,
+              background: isEarned ? `rgba(245,158,11,0.08)` : colors.inputBg,
+              border: `1px solid ${isEarned ? 'rgba(245,158,11,0.18)' : colors.inputBorder}`,
               borderRadius: '12px', padding: '14px 10px', textAlign: 'center',
-              transition: 'all 0.2s', opacity: isEarned ? 1 : 0.4,
-              filter: isEarned ? 'none' : 'grayscale(1)'
+              transition: 'all 0.2s', opacity: isEarned ? 1 : 0.9,
+              filter: isEarned ? 'none' : 'grayscale(0)'
             }}>
               <div style={{ fontSize: isMobile ? '24px' : '28px', marginBottom: '6px' }}>{badge.icon}</div>
-              <div style={{ fontSize: '11px', fontWeight: '700', color: isEarned ? '#f59e0b' : '#4b5563', marginBottom: '2px', lineHeight: 1.2 }}>
+              <div style={{ fontSize: '11px', fontWeight: '700', color: isEarned ? '#f59e0b' : colors.muted, marginBottom: '2px', lineHeight: 1.2 }}>
                 {badge.name}
               </div>
-              <div style={{ fontSize: '10px', color: '#374151', lineHeight: 1.3 }}>{badge.desc}</div>
+              <div style={{ fontSize: '10px', color: colors.textMuted || '#374151', lineHeight: 1.3 }}>{badge.desc}</div>
               {isEarned && (
-                <div style={{ marginTop: '6px', fontSize: '10px', color: '#10b981', fontWeight: '600' }}>
+                <div style={{ marginTop: '6px', fontSize: '10px', color: colors.success, fontWeight: '600' }}>
                   ✅ Earned!
                 </div>
               )}

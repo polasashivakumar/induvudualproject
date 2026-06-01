@@ -64,27 +64,27 @@ export default function TaskTimeTracker({ jobs, onUpdate }) {
       {/* Active timer */}
       {activeTimer && (
         <div style={{
-          background: 'linear-gradient(135deg, rgba(124,58,237,0.2), rgba(79,70,229,0.1))',
-          border: '1px solid rgba(124,58,237,0.3)',
+          background: colors.accentGradient,
+          border: `1px solid ${colors.primarySoftBorder}`,
           borderRadius: '14px', padding: isMobile ? '16px' : '20px', marginBottom: '16px',
           textAlign: 'center'
         }}>
-          <p style={{ color: '#a78bfa', fontSize: '12px', fontWeight: '600', marginBottom: '8px' }}>
+          <p style={{ color: colors.softPurple, fontSize: '12px', fontWeight: '600', marginBottom: '8px' }}>
             ⏱️ TRACKING
           </p>
           <p style={{ color: colors.text, fontWeight: '600', fontSize: isMobile ? '13px' : '14px', marginBottom: '12px' }}>
             {activeTimer.title}
           </p>
           <div style={{
-            fontSize: isMobile ? '34px' : '42px', fontWeight: '800', color: '#fff',
+            fontSize: isMobile ? '34px' : '42px', fontWeight: '800', color: colors.lightOnPrimary,
             fontFamily: 'monospace', letterSpacing: '2px', marginBottom: '16px'
           }}>
             {formatTime(elapsed)}
           </div>
           <button onClick={stopTimer} style={{
-            padding: '10px 24px', background: 'rgba(239,68,68,0.2)',
-            border: '1px solid rgba(239,68,68,0.3)', borderRadius: '10px',
-            color: '#ef4444', fontWeight: '700', fontSize: '13px',
+            padding: '10px 24px', background: `rgba(239,68,68,0.12)`,
+            border: `1px solid ${colors.danger}33`, borderRadius: '10px',
+            color: colors.danger, fontWeight: '700', fontSize: '13px',
             cursor: 'pointer', fontFamily: 'Inter, sans-serif'
           }}>
             ⏹️ Stop Timer
@@ -119,12 +119,10 @@ export default function TaskTimeTracker({ jobs, onUpdate }) {
                 onClick={() => activeTimer?.jobId === job._id ? stopTimer() : startTimer(job)}
                 style={{
                   padding: isMobile ? '8px 14px' : '6px 14px',
-                  background: activeTimer?.jobId === job._id
-                    ? 'rgba(239,68,68,0.15)' : 'rgba(124,58,237,0.15)',
-                  border: `1px solid ${activeTimer?.jobId === job._id
-                    ? 'rgba(239,68,68,0.3)' : 'rgba(124,58,237,0.3)'}`,
+                  background: activeTimer?.jobId === job._id ? `rgba(239,68,68,0.12)` : colors.primarySoftBg,
+                  border: `1px solid ${activeTimer?.jobId === job._id ? colors.danger + '33' : colors.primary + '33'}`,
                   borderRadius: '8px',
-                  color: activeTimer?.jobId === job._id ? '#ef4444' : '#a78bfa',
+                  color: activeTimer?.jobId === job._id ? colors.danger : colors.softPurple,
                   fontSize: '12px', fontWeight: '600',
                   cursor: 'pointer', fontFamily: 'Inter, sans-serif'
                 }}

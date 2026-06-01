@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTheme } from '../context/ThemeContext'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import API from '../api/axios'
 
@@ -16,6 +17,7 @@ export default function AnalyticsChart() {
   const [jobs, setJobs] = useState([])
   const [view, setView] = useState('type')
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+  const { colors } = useTheme()
 
   useEffect(() => {
     const fetch = async () => {
@@ -61,18 +63,18 @@ export default function AnalyticsChart() {
 
   return (
     <div style={{
-      background: 'rgba(17,24,39,0.6)',
-      border: '1px solid rgba(255,255,255,0.08)',
+      background: colors.card,
+      border: `1px solid ${colors.cardBorder}`,
       borderRadius: '20px', padding: isMobile ? '18px' : '24px',
       backdropFilter: 'blur(10px)'
     }}>
       {/* Header */}
       <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'stretch' : 'center', marginBottom: '20px', gap: '10px' }}>
         <div>
-          <h3 style={{ color: '#fff', fontWeight: '700', fontSize: isMobile ? '15px' : '16px' }}>
+          <h3 style={{ color: colors.text, fontWeight: '700', fontSize: isMobile ? '15px' : '16px' }}>
             📊 Task Analytics
           </h3>
-          <p style={{ color: '#4b5563', fontSize: '12px', marginTop: '2px' }}>
+          <p style={{ color: colors.muted, fontSize: '12px', marginTop: '2px' }}>
             Your task distribution
           </p>
         </div>
@@ -80,8 +82,8 @@ export default function AnalyticsChart() {
           {['type', 'status'].map(v => (
             <button key={v} onClick={() => setView(v)} style={{
               padding: '5px 12px', borderRadius: '6px', border: 'none', flex: isMobile ? 1 : 'initial',
-              background: view === v ? 'rgba(124,58,237,0.3)' : 'rgba(255,255,255,0.05)',
-              color: view === v ? '#a78bfa' : '#6b7280',
+              background: view === v ? colors.primarySoftBg : colors.inputBg,
+              color: view === v ? colors.softPurple : colors.muted,
               fontSize: '12px', fontWeight: '600', cursor: 'pointer',
               textTransform: 'capitalize', fontFamily: 'Inter, sans-serif'
             }}>{v}</button>
@@ -91,23 +93,23 @@ export default function AnalyticsChart() {
 
       {/* Completion rate */}
       <div style={{
-        background: 'rgba(16,185,129,0.1)',
-        border: '1px solid rgba(16,185,129,0.2)',
+        background: colors.primarySoftBg,
+        border: `1px solid ${colors.primarySoftBorder}`,
         borderRadius: '12px', padding: '12px 16px',
         marginBottom: '20px',
         display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', gap: '8px'
       }}>
         <div>
-          <div style={{ color: '#10b981', fontWeight: '700', fontSize: isMobile ? '22px' : '24px' }}>
+          <div style={{ color: colors.success, fontWeight: '700', fontSize: isMobile ? '22px' : '24px' }}>
             {completionRate}%
           </div>
-          <div style={{ color: '#6b7280', fontSize: '12px' }}>Completion Rate</div>
+          <div style={{ color: colors.muted, fontSize: '12px' }}>Completion Rate</div>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <div style={{ color: '#fff', fontWeight: '600', fontSize: isMobile ? '15px' : '16px' }}>
+          <div style={{ color: colors.text, fontWeight: '600', fontSize: isMobile ? '15px' : '16px' }}>
             {jobs.filter(j => j.state === 'completed').length}/{jobs.length}
           </div>
-          <div style={{ color: '#6b7280', fontSize: '12px' }}>Tasks Done</div>
+          <div style={{ color: colors.muted, fontSize: '12px' }}>Tasks Done</div>
         </div>
       </div>
 
