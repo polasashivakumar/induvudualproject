@@ -10,8 +10,31 @@ export default function useSocket(handlers = {}) {
 
   useEffect(() => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
-    const s = io(socketUrl, { auth: { token }, reconnectionAttempts: 5, reconnectionDelay: 1000 })
+
+    if (!token) {
+      console.warn('useSocket: no token found in localStorage — skipping socket connection')
+      return
+    }
+
+    console.debug('useSocket: connecting to', socketUrl)
+    const s = io(socketUrl, {
+      auth: { token },
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      transports: ['websocket', 'polling']
+    })
     socketRef.current = s
+
+    s.on('connect_error', (err) => {
+      try {
+        console.error('Socket connect_error:', err && err.message ? err.message : err)
+      } catch (e) {
+        console.error('Socket connect_error (stringify failed)')
+      }
+    })
+
+    s.on('connect', () => console.debug('Socket connected', s.id))
+    s.on('disconnect', (reason) => console.debug('Socket disconnected', reason))
 
     if (handlers.onConnect) s.on('connect', handlers.onConnect)
     if (handlers.onDisconnect) s.on('disconnect', handlers.onDisconnect)
@@ -28,6 +51,7 @@ export default function useSocket(handlers = {}) {
       if (handlers.onConnect) socketRef.current.off('connect', handlers.onConnect)
       if (handlers.onDisconnect) socketRef.current.off('disconnect', handlers.onDisconnect)
       socketRef.current.disconnect()
+      socketRef.current = null
     }
   }, [])
 
