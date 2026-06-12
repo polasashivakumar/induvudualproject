@@ -46,7 +46,7 @@ export default function Register() {
   const inputStyle = {
     width: '100%', background: 'rgba(255,255,255,0.05)',
     border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px',
-    padding: '12px 16px', color: '#fff', fontSize: '14px', outline: 'none',
+    padding: '12px 16px', color: '#000', fontSize: '14px', outline: 'none',
     fontFamily: 'Inter, sans-serif', transition: 'border-color 0.2s',
     boxSizing: 'border-box'
   }
