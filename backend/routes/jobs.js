@@ -308,8 +308,35 @@ router.post('/:id/resubmit', protect, async (req, res) => {
 });
 
 // Admin update status — FIXED
-router.put('/:id/status', protect, adminOnly, async (req, res, next) => {
-  return next();
+router.put('/:id/status', protect, adminOnly, async (req, res) => {
+  try {
+    const { state, adminNote } = req.body;
+    const validStates = ['waiting', 'active', 'completed', 'failed'];
+    if (!validStates.includes(state)) {
+      return res.status(400).json({ error: 'Invalid state' });
+    }
+
+    const job = await Job.findById(req.params.id);
+    if (!job) return res.status(404).json({ error: 'Task not found' });
+
+    job.state = state;
+    if (adminNote) {
+      job.adminNote = adminNote;
+    }
+    job.auditLog.push({
+      action: 'status_updated',
+      by: req.user.name,
+      role: 'admin',
+      note: adminNote || `Status changed to ${state}`
+    });
+
+    await job.save();
+    try { app.locals.io?.emit('job:updated', { jobId: job._id, state: job.state, title: job.title }); } catch (e) {}
+
+    res.json({ success: true, job });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Student mark complete
