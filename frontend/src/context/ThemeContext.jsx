@@ -31,6 +31,15 @@ export const ThemeProvider = ({ children }) => {
     inputBorder: 'rgba(255,255,255,0.1)',
     rowHover: 'rgba(124,58,237,0.05)',
     rowAlt: 'rgba(255,255,255,0.01)',
+    primary: '#7c3aed',
+    primarySoftBg: 'rgba(124,58,237,0.12)',
+    primarySoftBorder: 'rgba(124,58,237,0.3)',
+    accentGradient: 'linear-gradient(135deg, rgba(124,58,237,0.25), rgba(79,70,229,0.15))',
+    softPurple: '#a78bfa',
+    success: '#10b981',
+    warning: '#f59e0b',
+    danger: '#ef4444',
+    lightOnPrimary: '#ffffff'
   } : {
     bg: '#f6f8fb',
     bg2: '#f3f5ff',

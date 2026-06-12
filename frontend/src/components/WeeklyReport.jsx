@@ -64,7 +64,7 @@ export default function WeeklyReport() {
               padding: '12px', textAlign: 'center', border: `1px solid ${colors.inputBorder}`
             }}>
               <div style={{ fontSize: '22px', fontWeight: '800', color: s.color }}>{s.value ?? 0}</div>
-              <div style={{ fontSize: '10px', color: colors.muted, marginTop: '2px' }}>{s.label}</div>
+              <div style={{ fontSize: '10px', color: colors.textMuted, marginTop: '2px' }}>{s.label}</div>
             </div>
           ))}
         </div>
@@ -83,19 +83,19 @@ export default function WeeklyReport() {
             <div style={{ fontSize: '24px', fontWeight: '800', color: colors.text }}>
               {report?.allTime?.total ?? 0}
             </div>
-            <div style={{ fontSize: '11px', color: colors.muted }}>Total Tasks</div>
+            <div style={{ fontSize: '11px', color: colors.textMuted }}>Total Tasks</div>
           </div>
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontSize: '24px', fontWeight: '800', color: colors.success }}>
               {report?.allTime?.completionRate ?? 0}%
             </div>
-            <div style={{ fontSize: '11px', color: colors.muted }}>Success Rate</div>
+            <div style={{ fontSize: '11px', color: colors.textMuted }}>Success Rate</div>
           </div>
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontSize: '24px', fontWeight: '800', color: colors.warning }}>
               {report?.allTime?.avgRating > 0 ? `${report.allTime.avgRating}⭐` : 'N/A'}
             </div>
-            <div style={{ fontSize: '11px', color: colors.muted }}>Avg Rating</div>
+            <div style={{ fontSize: '11px', color: colors.textMuted }}>Avg Rating</div>
           </div>
         </div>
       </div>
@@ -116,7 +116,7 @@ export default function WeeklyReport() {
                   {typeLabels[t._id] || t._id}
                 </span>
                 <div style={{ display: 'flex', gap: '12px' }}>
-                  <span style={{ color: colors.muted, fontSize: '12px' }}>{t.count} total</span>
+                  <span style={{ color: colors.textMuted, fontSize: '12px' }}>{t.count} total</span>
                   <span style={{ color: colors.success, fontSize: '12px', fontWeight: '600' }}>
                     {t.completed} done
                   </span>
