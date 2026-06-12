@@ -4,7 +4,7 @@ import { useTheme } from '../context/ThemeContext'
 
 export default function ActivityHeatmap() {
   const [data, setData] = useState({})
-  const { colors } = useTheme()
+  const { colors, theme } = useTheme()
 
   useEffect(() => {
     const fetch = async () => {
@@ -43,11 +43,12 @@ export default function ActivityHeatmap() {
   }
 
   const getColor = (count) => {
-    if (count === 0) return colors.inputBg
-    if (count === 1) return 'rgba(124,58,237,0.3)'
-    if (count === 2) return 'rgba(124,58,237,0.5)'
-    if (count === 3) return 'rgba(124,58,237,0.7)'
-    return '#7c3aed'
+    // Light mode: use grays and solid purples; Dark mode: use semi-transparent purples
+    if (count === 0) return theme === 'dark' ? colors.inputBg : '#e5e7eb'
+    if (count === 1) return theme === 'dark' ? 'rgba(124,58,237,0.3)' : '#d8bfd8'
+    if (count === 2) return theme === 'dark' ? 'rgba(124,58,237,0.5)' : '#ba7bb8'
+    if (count === 3) return theme === 'dark' ? 'rgba(124,58,237,0.7)' : '#a86fa3'
+    return theme === 'dark' ? '#7c3aed' : '#9d5ba8'
   }
 
   const totalTasks = Object.values(data).reduce((a, b) => a + b, 0)
